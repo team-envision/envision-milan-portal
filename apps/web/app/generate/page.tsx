@@ -6,13 +6,9 @@ export default function GeneratePage() {
   return (
     <GeneratorProvider>
       <div className="min-h-screen pt-28 bg-gray-50">
-        <div className="max-w-full flex flex-col md:flex-row justify-center align-middle gap-12">
-          <div className="w-full md:w-3xl flex-1">
-            <GeneratorForm />
-          </div>
-          <div className="w-full flex-2">
-            <GeneratedPreview />
-          </div>
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <GeneratorForm />
+          <GeneratedPreview />
         </div>
       </div>
     </GeneratorProvider>
