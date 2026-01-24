@@ -10,7 +10,7 @@ export default function GeneratedPreview() {
     <div className="bg-white p-8 rounded-xl shadow-sm flex flex-col items-center">
       <h2 className="text-xl font-semibold mb-4">Generated Poster</h2>
 
-      <div className="relative w-[360px] h-[640px] bg-gray-100 rounded-xl shadow-lg">
+      <div className="relative w-full h-screen bg-gray-100 rounded-xl shadow-lg">
         {state.isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
             Generating...
@@ -20,7 +20,7 @@ export default function GeneratedPreview() {
         {state.generatedImage && !state.isLoading && (
           <img
             src={state.generatedImage}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-contain"
           />
         )}
 
