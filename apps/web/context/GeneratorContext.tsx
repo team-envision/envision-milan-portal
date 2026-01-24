@@ -16,6 +16,7 @@ type GeneratorState = {
   isLoading: boolean;
   generatedImage: string | null;
   compressedText?: string | null;
+  uploadedImages: File[];
 };
 
 interface GeneratorContextType {
@@ -32,6 +33,7 @@ export function GeneratorProvider({ children }: { children: ReactNode }) {
     memory: "",
     isLoading: false,
     generatedImage: null,
+    uploadedImages: [],
   });
 
   return (

@@ -5,18 +5,40 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function POST(req: Request) {
   try {
-    const { prompt } = await req.json();
+    const { prompt, images } = await req.json();
 
-    if (!prompt) {
-      return NextResponse.json({ error: "Prompt missing" }, { status: 400 });
+    if (!prompt || !images || images.length !== 3) {
+      return NextResponse.json(
+        { error: "Prompt and exactly 3 images are required" },
+        { status: 400 },
+      );
     }
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash-image",
     });
 
-    // ✅ IMAGE MODELS EXPECT STRING, NOT CHAT OBJECT
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          mimeType: "image/jpeg",
+          data: images[0],
+        },
+      },
+      {
+        inlineData: {
+          mimeType: "image/jpeg",
+          data: images[1],
+        },
+      },
+      {
+        inlineData: {
+          mimeType: "image/jpeg",
+          data: images[2],
+        },
+      },
+    ]);
 
     const candidate = result.response.candidates?.[0];
     const imagePart = candidate?.content?.parts?.find(
@@ -26,7 +48,7 @@ export async function POST(req: Request) {
     if (!imagePart || !imagePart.inlineData) {
       console.error("Gemini response:", result.response);
       return NextResponse.json(
-        { error: "No image generated" },
+        { error: "Image generation failed" },
         { status: 500 },
       );
     }
