@@ -18,7 +18,6 @@ export default function Navbar() {
           <div className="h-10 w-10 bg-gray-200 rounded-full" />
           <div>
             <p className="text-sm font-semibold">SRM University</p>
-            <p className="text-xs text-gray-500">40 Years of SRM</p>
           </div>
         </div>
 
@@ -31,10 +30,8 @@ export default function Navbar() {
           <Link href="#guidelines">Guidelines</Link>
         </div>
 
-        {/* Right */}
-        <button className="text-sm px-4 py-2 border rounded-md hover:bg-gray-100">
-          Login / Sign Up
-        </button>
+        
+        
       </div>
     </motion.nav>
   );
