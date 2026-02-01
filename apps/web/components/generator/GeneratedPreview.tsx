@@ -7,7 +7,7 @@ export default function GeneratedPreview() {
   const { state } = useGenerator();
 
   return (
-    <div className="bg-white p-8 rounded-xl shadow-sm flex flex-col items-center">
+    <div className="bg-black p-8 rounded-xl shadow-sm flex flex-col items-center">
       <h2 className="text-xl font-semibold mb-4">Generated Poster</h2>
 
       <div className="relative w-full h-screen bg-gray-100 rounded-xl shadow-lg">
