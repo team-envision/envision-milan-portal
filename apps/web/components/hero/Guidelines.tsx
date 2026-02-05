@@ -38,7 +38,7 @@ const itemVariants: Variants = {
 
 export default function Guidelines() {
   return (
-    <section id="guidelines" className="py-28 bg-[#0a0a0a] border-t border-white/5">
+    <section id="guidelines" className="py-12 bg-[#0a0a0a]">
       <div className="max-w-5xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
@@ -48,12 +48,10 @@ export default function Guidelines() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight">
             Guidelines
           </h2>
           <p className="mt-4 text-white/50 max-w-2xl mx-auto">
-            This platform is designed to responsibly celebrate 40 years of SRM. 
-            Users are expected to follow ethical and respectful usage practices.
           </p>
         </motion.div>
 

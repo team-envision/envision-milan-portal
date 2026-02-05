@@ -79,7 +79,7 @@ const cardVariants: Variants = {
 
 export default function GalleryCarousel() {
   return (
-    <section id="gallery" className="py-28 bg-[#0a0a0a]">
+    <section id="gallery" className="py-12 bg-[#0a0a0a]">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
@@ -89,7 +89,7 @@ export default function GalleryCarousel() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight">
             Sample Generations
           </h2>
           <p className="mt-4 text-white/50 max-w-xl mx-auto">
