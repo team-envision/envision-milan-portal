@@ -23,18 +23,18 @@ const dynamoClient = new DynamoDBClient({
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { 
+    const {
       imageBase64, // Expecting base64 string (either raw or data URI)
-      prompt, 
-      theme, 
-      memory, 
-      compressedText 
+      prompt,
+      theme,
+      memory,
+      compressedText,
     } = body;
 
     if (!imageBase64) {
       return NextResponse.json(
         { error: "Image data is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -42,11 +42,11 @@ export async function POST(req: Request) {
     // Strip "data:image/jpeg;base64," prefix if present
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
     const buffer = Buffer.from(base64Data, "base64");
-    
+
     // Generate unique IDs
     const posterId = crypto.randomUUID();
     const timestamp = new Date().toISOString();
-    const fileName = `posters/${timestamp.split('T')[0]}/${posterId}.png`;
+    const fileName = `posters/${timestamp.split("T")[0]}/${posterId}.png`;
 
     // 2. Upload to S3
     const uploadParams = {
@@ -86,12 +86,11 @@ export async function POST(req: Request) {
       imageUrl,
       message: "Poster saved successfully",
     });
-
   } catch (error) {
     console.error("Save poster error:", error);
     return NextResponse.json(
       { error: "Failed to save poster" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
