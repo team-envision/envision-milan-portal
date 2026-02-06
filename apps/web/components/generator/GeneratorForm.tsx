@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 
 import { useGenerator } from "@/context/GeneratorContext";
 import { buildPosterPrompt } from "@/utils/prompts/build";
@@ -169,104 +170,23 @@ export default function GeneratorForm() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-xl shadow-sm border">
-      <h2 className="text-2xl font-semibold mb-6">Generate Your Poster</h2>
+    <div className="bg-transparent p-8 rounded-xl border border-white/20">
+      <h2 className="text-3xl font-semibold mb-8 text-center text-white">
+        Create Your Memory
+      </h2>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Top Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              name="theme"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Theme</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="University Event – Aaruush '25"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="imageStyle"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image Output Style</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Photorealistic, vibrant night event"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
+          {/* Theme */}
           <FormField
-            name="backgroundColor"
+            name="theme"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Background Color</FormLabel>
-                <FormControl>
-                  <Input placeholder="Dark shades, warm tones" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              name="backgroundTexture"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Background Texture</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Shiny, aesthetic texture" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="backgroundDecorations"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Background Decorations</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Faded academic watermark patterns"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            name="frameColor"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Frame Color</FormLabel>
+                <FormLabel className="text-white/90 text-lg">Theme</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Metallic silver / matte black"
+                    className="bg-[#1a1a1a] border-white/20 text-white h-12 focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-white/30"
                     {...field}
                   />
                 </FormControl>
@@ -275,14 +195,115 @@ export default function GeneratorForm() {
             )}
           />
 
+          {/* Background Color (Hidden) */}
+          <FormField
+            name="backgroundColor"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormControl>
+                  <Input type="hidden" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Background Color and Texture */}
+          <FormField
+            name="backgroundTexture"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white/90 text-lg">
+                  Background Color and Texture
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className="bg-[#1a1a1a] border-white/20 text-white h-12 focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-white/30"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Background Decorations */}
+          <FormField
+            name="backgroundDecorations"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white/90 text-lg">
+                  Background Decorations
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className="bg-[#1a1a1a] border-white/20 text-white h-12 focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-white/30"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Frame Color */}
+          <FormField
+            name="frameColor"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white/90 text-lg">
+                  Frame Color
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className="bg-[#1a1a1a] border-white/20 text-white h-12 focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-white/30"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Image Output Style */}
+          <FormField
+            name="imageStyle"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white/90 text-lg">
+                  Image Output Style
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className="bg-[#1a1a1a] border-white/20 text-white h-12 focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-white/30"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Your Memory */}
           <FormField
             name="memory"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Your Memory</FormLabel>
+                <FormLabel className="text-white/90 text-lg">
+                  Your Memory
+                </FormLabel>
                 <FormControl>
-                  <Textarea rows={4} className="resize-none" {...field} />
+                  <Textarea
+                    rows={5}
+                    className="resize-none bg-[#1a1a1a] border-white/20 text-white focus-visible:ring-offset-0 focus-visible:ring-1 focus-visible:ring-white/30"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -295,17 +316,20 @@ export default function GeneratorForm() {
             name="images"
             render={({ field: { onChange, value, ...fieldProps } }) => (
               <FormItem>
-                <FormLabel>Upload 3 Photos</FormLabel>
+                <FormLabel className="text-white/90 text-lg">
+                  Upload 3 Photos
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...fieldProps}
                     type="file"
                     accept="image/png,image/jpeg,image/webp"
                     multiple
+                    className="bg-[#1a1a1a] border-white/20 text-white pt-2 h-14 cursor-pointer file:text-white file:mr-4 file:bg-white/10 file:px-4 file:rounded-full file:border-0 hover:file:bg-white/20 transition-all"
                     onChange={(e) => onChange(Array.from(e.target.files || []))}
                   />
                 </FormControl>
-                <FormDescription>
+                <FormDescription className="text-white/50">
                   Exactly 3 images. Max 20MB each.
                 </FormDescription>
 
@@ -315,7 +339,7 @@ export default function GeneratorForm() {
                       <img
                         key={i}
                         src={URL.createObjectURL(file)}
-                        className="h-24 w-full object-cover rounded-md border"
+                        className="h-24 w-full object-cover rounded-md border border-white/20"
                         alt={`preview-${i}`}
                       />
                     ))}
@@ -326,13 +350,22 @@ export default function GeneratorForm() {
             )}
           />
 
-          <Button
-            type="submit"
-            disabled={state.isLoading}
-            className="w-full h-12 text-lg"
-          >
-            {state.isLoading ? "Generating..." : "Generate Poster"}
-          </Button>
+          <div className="flex justify-center mt-6">
+            <Button
+              type="submit"
+              disabled={state.isLoading}
+              className="px-8 h-12 text-lg rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm transition-all flex items-center gap-2"
+            >
+              <Image 
+                src="/images/star.png" 
+                alt="Star" 
+                width={30} 
+                height={30} 
+                className="w-8 h-8"
+              />
+              {state.isLoading ? "Generating..." : "Generate Poster"}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

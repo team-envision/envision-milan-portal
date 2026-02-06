@@ -7,12 +7,12 @@ export default function GeneratedPreview() {
   const { state } = useGenerator();
 
   return (
-    <div className="bg-white p-8 rounded-xl shadow-sm flex flex-col items-center">
-      <h2 className="text-xl font-semibold mb-4">Generated Poster</h2>
+    <div className="bg-transparent p-8 rounded-xl border border-white/20 flex flex-col items-center h-full">
+      <h2 className="text-3xl font-semibold mb-8 text-center text-white">Generated Poster</h2>
 
-      <div className="relative w-full h-screen bg-gray-100 rounded-xl shadow-lg">
+      <div className="relative w-full h-full min-h-[600px] border border-white/20 rounded-xl overflow-hidden bg-[#1a1a1a]/50 flex items-center justify-center">
         {state.isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center text-white/50 animate-pulse">
             Generating...
           </div>
         )}
@@ -20,20 +20,25 @@ export default function GeneratedPreview() {
         {state.generatedImage && !state.isLoading && (
           <img
             src={state.generatedImage}
-            className="absolute inset-0 w-full h-full object-contain"
+            className="w-full h-full object-contain"
+            alt="Generated Poster"
           />
         )}
+        
+        {!state.generatedImage && !state.isLoading && (
+             <div className="text-white/20">Preview will appear here</div>
+        )}
 
-        {/* Fixed overlay frame */}
-        <div className="absolute inset-0 border-[12px] border-[#5a3e2b] pointer-events-none" />
       </div>
       {state.compressedText && (
-        <p className="mt-3 text-sm text-gray-600 italic">
+        <p className="mt-4 text-sm text-gray-400 italic text-center max-w-md">
           Caption: {state.compressedText}
         </p>
       )}
 
-      {state.generatedImage && <ShareActions />}
+      <div className="mt-6 w-full flex justify-center"> 
+        {state.generatedImage && <ShareActions />}
+      </div>
     </div>
   );
 }

@@ -53,25 +53,13 @@ export default function ShareActions() {
   };
 
   return (
-    <div className="mt-6 flex flex-wrap justify-center gap-3">
+    <div className="flex justify-center w-full">
       <Button 
         onClick={handleDownload}
         disabled={isSaving}
-        className="flex items-center gap-2 bg-black text-white hover:bg-gray-800"
+        className="px-8 h-12 text-lg rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm transition-all min-w-[200px]"
       >
-        <Download className="w-4 h-4" />
-        {isSaving ? "Saving..." : "Download & Save"}
-      </Button>
-
-      {/* Social Placeholders - Visual only for now */}
-      <Button variant="outline" size="icon" title="Share on Instagram">
-        <Instagram className="w-4 h-4" />
-      </Button>
-      <Button variant="outline" size="icon" title="Share on LinkedIn">
-        <Linkedin className="w-4 h-4" />
-      </Button>
-      <Button variant="outline" size="icon" title="Share on Twitter">
-        <Twitter className="w-4 h-4" />
+        {isSaving ? "Saving..." : "Download"}
       </Button>
     </div>
   );
