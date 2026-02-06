@@ -17,7 +17,7 @@ export default function AboutPortal() {
           </g>
           <defs>
             <clipPath id="clip0_2002_167">
-              <rect width="367" height="316" fill="white"/>
+              <rect width="367" height="316" fill="black"/>
             </clipPath>
           </defs>
         </svg>

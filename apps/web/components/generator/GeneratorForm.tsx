@@ -169,7 +169,7 @@ export default function GeneratorForm() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-xl shadow-sm border">
+    <div className="bg-black p-8 rounded-xl shadow-sm border">
       <h2 className="text-2xl font-semibold mb-6">Generate Your Poster</h2>
 
       <Form {...form}>
