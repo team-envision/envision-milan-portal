@@ -5,7 +5,7 @@ import { GeneratorProvider } from "@/context/GeneratorContext";
 export default function GeneratePage() {
   return (
     <GeneratorProvider>
-      <div className="min-h-screen pt-28 bg-gray-50">
+      <div className="min-h-screen pt-28 bg-black">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
           <GeneratorForm />
           <GeneratedPreview />
