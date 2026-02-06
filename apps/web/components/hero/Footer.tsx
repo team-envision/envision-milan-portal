@@ -31,7 +31,7 @@ export default function Footer() {
               {/* Social Icons - Justify Between to span full width of logo */}
               <div className="flex items-center justify-between w-full mt-6">
                 <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/facebook.png" alt="Facebook" width={20} height={20} />
+                  <Image src="/images/facebook.png" alt="Facebook" width={17} height={17} />
                 </a>
                 <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
                   <Image src="/images/X.png" alt="X" width={20} height={20} />
@@ -91,7 +91,7 @@ export default function Footer() {
               {/* Aaruush Social Icons - Spanning full width */}
               <div className="flex items-center justify-between w-full mt-4">
                 <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/aarush_website.png" alt="Aaruush Website" width={18} height={18} />
+                  <Image src="/images/aarush_website.png" alt="Aaruush Website" width={35} height={35} />
                 </a>
                 <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
                   <Image src="/images/facebook.png" alt="Facebook" width={18} height={18} />
