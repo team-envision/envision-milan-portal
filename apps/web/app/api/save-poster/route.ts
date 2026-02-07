@@ -43,19 +43,25 @@ export async function POST(req: Request) {
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
     const buffer = Buffer.from(base64Data, "base64");
     
-    // Generate unique IDs
+    // Generate unique IDs and S3 key
     const posterId = crypto.randomUUID();
-    const timestamp = new Date().toISOString();
-    const fileName = `posters/${timestamp.split('T')[0]}/${posterId}.png`;
+    // Folder in S3 where posters are saved. Configure via env var S3_POSTERS_FOLDER
+    const folder = process.env.S3_POSTERS_FOLDER || "posters";
+    const fileName = `${folder}/${posterId}.png`;
 
     // 2. Upload to S3
-    const uploadParams = {
+    const uploadParams: any = {
       Bucket: process.env.S3_BUCKET_NAME,
       Key: fileName,
       Body: buffer,
       ContentType: "image/png",
       ContentEncoding: "base64",
     };
+
+    // Optionally set public read ACL when S3_PUBLIC env var is 'true'
+    if (process.env.S3_PUBLIC === "true") {
+      uploadParams.ACL = "public-read";
+    }
 
     await s3Client.send(new PutObjectCommand(uploadParams));
 
