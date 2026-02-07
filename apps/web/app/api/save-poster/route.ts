@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import sharp from "sharp";
 
 // Initialize AWS Clients
 // Note: In Next.js 16/App Router, these are initialized on the server side.
@@ -19,6 +20,72 @@ const dynamoClient = new DynamoDBClient({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
 });
+
+// Constants
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const TARGET_QUALITY = 85; // Initial quality level
+
+/**
+ * Compress image to be under 5MB without significant quality loss
+ * Uses adaptive quality reduction and format optimization
+ */
+async function compressImage(buffer: Buffer): Promise<Buffer> {
+  let quality = TARGET_QUALITY;
+  let compressed = buffer;
+
+  // If image is already under 5MB, return as-is
+  if (buffer.length <= MAX_FILE_SIZE) {
+    return buffer;
+  }
+
+  // Iteratively compress until under 5MB
+  while (compressed.length > MAX_FILE_SIZE && quality > 50) {
+    try {
+      compressed = await sharp(buffer)
+        .jpeg({ quality, progressive: true, mozjpeg: true })
+        .toBuffer();
+
+      if (compressed.length <= MAX_FILE_SIZE) {
+        return compressed;
+      }
+
+      // Reduce quality for next iteration
+      quality -= 5;
+    } catch (error) {
+      console.error("Error during compression:", error);
+      break;
+    }
+  }
+
+  // If still too large, resize the image dimensions
+  if (compressed.length > MAX_FILE_SIZE) {
+    quality = 80;
+    try {
+      const metadata = await sharp(buffer).metadata();
+      const newWidth = Math.floor((metadata.width || 1920) * 0.8);
+
+      while (compressed.length > MAX_FILE_SIZE && quality > 50) {
+        compressed = await sharp(buffer)
+          .resize(newWidth, undefined, {
+            withoutEnlargement: true,
+            fit: "inside",
+          })
+          .jpeg({ quality, progressive: true, mozjpeg: true })
+          .toBuffer();
+
+        if (compressed.length <= MAX_FILE_SIZE) {
+          return compressed;
+        }
+
+        quality -= 5;
+      }
+    } catch (error) {
+      console.error("Error during resize compression:", error);
+    }
+  }
+
+  return compressed;
+}
 
 export async function POST(req: Request) {
   try {
@@ -41,7 +108,10 @@ export async function POST(req: Request) {
     // 1. Process Image Data
     // Strip "data:image/jpeg;base64," prefix if present
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-    const buffer = Buffer.from(base64Data, "base64");
+    let buffer = Buffer.from(base64Data, "base64");
+    
+    // 2. Compress image if needed (silently)
+    buffer = await compressImage(buffer);
     
     // Generate unique IDs and S3 key
     const posterId = crypto.randomUUID();
@@ -49,7 +119,7 @@ export async function POST(req: Request) {
     const folder = process.env.S3_POSTERS_FOLDER || "posters";
     const fileName = `${folder}/${posterId}.png`;
 
-    // 2. Upload to S3
+    // 3. Upload to S3
     const uploadParams: any = {
       Bucket: process.env.S3_BUCKET_NAME,
       Key: fileName,
@@ -69,7 +139,8 @@ export async function POST(req: Request) {
     // If bucket is private, you might generate a presigned URL instead.
     const imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 
-    // 3. Save Metadata to DynamoDB
+    // 4. Save Metadata to DynamoDB
+    const timestamp = new Date().toISOString();
     const dbParams = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Item: {
