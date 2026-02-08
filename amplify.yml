@@ -11,9 +11,12 @@ applications:
         build:
           commands:
             - npx turbo run build --filter=web
-            - cp -rp .next/standalone/apps/web/. .next/standalone/
+
+            # Copy static assets (Next.js does not include them in standalone)
             - mkdir -p .next/standalone/.next/static
             - cp -rp .next/static/. .next/standalone/.next/static/
+
+            # Copy public assets
             - cp -rp public/. .next/standalone/public/
 
       artifacts:
