@@ -7,13 +7,20 @@ applications:
           commands:
             - cd ../..
             - npm ci
+
         build:
           commands:
             - npx turbo run build --filter=web
+            - cp -rp .next/standalone/apps/web/. .next/standalone/
+            - mkdir -p .next/standalone/.next/static
+            - cp -rp .next/static/. .next/standalone/.next/static/
+            - cp -rp public/. .next/standalone/public/
+
       artifacts:
-        baseDirectory: .next
+        baseDirectory: .next/standalone
         files:
           - "**/*"
+
       cache:
         paths:
           - .turbo/**/*
