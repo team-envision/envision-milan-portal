@@ -9,6 +9,37 @@ import Image from "next/image";
 import { useGenerator } from "@/context/GeneratorContext";
 import { buildPosterPrompt } from "@/utils/prompts/build";
 
+/* ---------------- Cookie Utilities ---------------- */
+
+const getCookie = (name: string): string | null => {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
+};
+
+const setCookie = (name: string, value: string, days: number = 365): void => {
+  if (typeof document === "undefined") return;
+  const date = new Date();
+  date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+  const expires = `expires=${date.toUTCString()}`;
+  document.cookie = `${name}=${value};${expires};path=/`;
+};
+
+const POSTER_COUNT_COOKIE = "poster_generation_count";
+const MAX_POSTER_LIMIT = 2;
+
+const incrementPosterCount = (): void => {
+  const currentCount = parseInt(getCookie(POSTER_COUNT_COOKIE) || "0", 10);
+  setCookie(POSTER_COUNT_COOKIE, String(currentCount + 1));
+};
+
+const canGeneratePoster = (): boolean => {
+  const currentCount = parseInt(getCookie(POSTER_COUNT_COOKIE) || "0", 10);
+  return currentCount < MAX_POSTER_LIMIT;
+};
+
 import {
   Form,
   FormControl,
@@ -109,6 +140,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function GeneratorForm() {
   const { state, setState } = useGenerator();
   const [isCompressing, setIsCompressing] = useState<boolean>(false);
+  const [limitError, setLimitError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -127,6 +159,13 @@ export default function GeneratorForm() {
   const uploadedImages = form.watch("images");
 
   const onSubmit = async (values: FormValues): Promise<void> => {
+    /* ---- Check Cookie Limit ---- */
+    if (!canGeneratePoster()) {
+      setLimitError("Only two poster generations allowed.");
+      return;
+    }
+
+    setLimitError(null);
     setState((prev) => ({ ...prev, isLoading: true }));
 
     try {
@@ -192,6 +231,9 @@ export default function GeneratorForm() {
 
       const imageUrl = `data:${data.mimeType};base64,${data.imageBase64}`;
 
+      /* ---- Increment Cookie Count ---- */
+      incrementPosterCount();
+
       setState((prev) => ({
         ...prev,
         generatedImage: imageUrl,
@@ -209,6 +251,12 @@ export default function GeneratorForm() {
       <h2 className="text-3xl font-semibold mb-8 text-center text-white">
         Create Your Memory
       </h2>
+
+      {limitError && (
+        <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-center">
+          <p className="text-red-400 font-semibold">{limitError}</p>
+        </div>
+      )}
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
