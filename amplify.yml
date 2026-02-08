@@ -7,23 +7,13 @@ applications:
           commands:
             - cd ../..
             - npm ci
-
         build:
           commands:
             - npx turbo run build --filter=web
-
-            # Copy static assets (Next.js does not include them in standalone)
-            - mkdir -p .next/standalone/.next/static
-            - cp -rp .next/static/. .next/standalone/.next/static/
-
-            # Copy public assets
-            - cp -rp public/. .next/standalone/public/
-
       artifacts:
-        baseDirectory: .next/standalone
+        baseDirectory: .next
         files:
           - "**/*"
-
       cache:
         paths:
           - .turbo/**/*
