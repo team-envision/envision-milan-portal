@@ -144,7 +144,7 @@ export default function ShareActions() {
       <Button
         onClick={handleDownload}
         disabled={isSaving}
-        className="flex items-center gap-2 bg-black text-white hover:bg-gray-800"
+        className="px-8 h-12 text-lg rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm transition-all min-w-[200px]"
       >
         <Download className="w-4 h-4" />
         {isSaving ? "Saving..." : "Download & Save"}

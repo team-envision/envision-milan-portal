@@ -1,152 +1,102 @@
 "use client";
 
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
-type IconName = "upload" | "theme" | "generate" | "download";
-
-const steps: { number: number; title: string; description: string; iconName: IconName }[] = [
+const steps = [
   {
     number: 1,
     title: "Upload Image",
     description: "Choose your favorite campus photo or memory from your device",
-    iconName: "upload",
+    icon: "/images/upload.png",
   },
   {
     number: 2,
     title: "Choose Theme",
     description: "Select from iconic SRM buildings and campus locations",
-    iconName: "theme",
+    icon: "/images/color-pallete.png",
   },
   {
     number: 3,
     title: "AI Generates",
     description: "Our AI transforms your image into a beautiful polaroid",
-    iconName: "generate",
+    icon: "/images/star.png",
   },
   {
     number: 4,
     title: "Download & Share",
     description: "Save your polaroid and share it with the SRM community",
-    iconName: "download",
+    icon: "/images/Download.png",
   },
 ];
 
-function StepIcon({ name }: { name: IconName }) {
-  const icons: Record<IconName, React.ReactNode> = {
-    upload: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-      </svg>
-    ),
-    theme: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <circle cx="12" cy="12" r="3" strokeWidth={1.5} />
-        <circle cx="12" cy="5" r="1.5" fill="currentColor" />
-        <circle cx="12" cy="19" r="1.5" fill="currentColor" />
-        <circle cx="5" cy="12" r="1.5" fill="currentColor" />
-        <circle cx="19" cy="12" r="1.5" fill="currentColor" />
-      </svg>
-    ),
-    generate: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
-      </svg>
-    ),
-    download: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-      </svg>
-    ),
-  };
-  return <>{icons[name]}</>;
-}
-
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
-};
-
-const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-};
-
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-16 bg-[#0a0a0a]">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Section Header */}
+    <section id="how-it-works" className="py-12 bg-[#0a0a0a] relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-12"
+          viewport={{ once: true }}
+          className="text-center mb-20"
         >
-          <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight">
             How it Works
           </h2>
         </motion.div>
 
-        {/* Steps Grid - 4 columns with new card design */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
-          {steps.map((step) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+          {steps.map((step, index) => (
             <motion.div
               key={step.number}
-              variants={cardVariants}
-              className="relative"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="relative group pt-6"
             >
-              {/* Number Badge - positioned at top center with notch effect */}
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                <div className="w-8 h-8 rounded-full bg-[#0a0a0a] border-2 border-white/30 flex items-center justify-center">
-                  <span className="text-sm font-semibold text-white">{step.number}</span>
+              {/* Number Badge */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30">
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                  <span className="text-black font-bold text-lg">{step.number}</span>
                 </div>
               </div>
-              
-              {/* Card with notch at top */}
-              <div className="relative bg-[#151515] border border-white/10 rounded-2xl pt-10 pb-6 px-5
-                transition-all duration-300 hover:border-white/20 h-full"
-              >
-                {/* Top notch/cutout visual using pseudo effect */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-4 bg-[#0a0a0a] rounded-b-xl" />
+
+              {/* Card Container */}
+              <div className="relative bg-[#0F0F0F] rounded-[32px] pt-16 pb-12 px-8 h-full border border-white/5 transition-all duration-300 hover:border-white/10 hover:bg-[#121212]">
                 
+                {/* Connector Line - Only for 2nd, 3rd, 4th cards (index > 0) */}
+                {/* Starts from right edge of previous card (-24px gap) and ends at center of this card (50%) */}
+                {index > 0 && (
+                  <div className="hidden lg:block absolute top-[6.5rem] right-1/2 left-[-24px] h-[1px] bg-white/30 shadow-[0_0_10px_rgba(255,255,255,0.2)] z-0" />
+                )}
+
                 {/* Icon */}
-                <div className="flex justify-center mb-4">
-                  <div className="w-10 h-10 flex items-center justify-center text-white/80">
-                    <StepIcon name={step.iconName} />
+                <div className="relative z-10 mb-8 flex items-center justify-center">
+                  <div className="relative w-20 h-20 opacity-90 group-hover:opacity-100 transition-opacity">
+                    <Image
+                      src={step.icon}
+                      alt={step.title}
+                      fill
+                      className="object-contain invert brightness-0 filter" 
+                      style={{ filter: "brightness(0) invert(1)" }} 
+                    />
                   </div>
                 </div>
-                
+
                 {/* Content */}
-                <h3 className="text-base font-semibold text-white text-center">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm text-white/40 leading-relaxed text-center">
-                  {step.description}
-                </p>
+                <div className="text-center space-y-3 relative z-10">
+                  <h3 className="text-xl font-bold text-white">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-white/50 leading-relaxed max-w-[200px] mx-auto">
+                    {step.description}
+                  </p>
+                </div>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

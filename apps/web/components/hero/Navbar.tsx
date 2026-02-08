@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -13,6 +14,7 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -77,20 +79,22 @@ export default function Navbar() {
       </nav>
 
       {/* Generate Button - Absolute Right */}
-      <div className="absolute right-8 pointer-events-auto">
-        <Link
-          href="/generate"
-          className="px-6 py-2.5 text-sm font-medium 
-            bg-[#1a1a1a] text-white rounded-full
-            border border-white/20
-            hover:bg-[#252525] hover:border-white/30
-            active:scale-[0.98]
-            transition-all duration-200
-            backdrop-blur-sm block"
-        >
-          Generate
-        </Link>
-      </div>
+      {pathname !== "/generate" && (
+        <div className="absolute right-8 pointer-events-auto">
+          <Link
+            href="/generate"
+            className="px-6 py-2.5 text-sm font-medium 
+              bg-[#1a1a1a] text-white rounded-full
+              border border-white/20
+              hover:bg-[#252525] hover:border-white/30
+              active:scale-[0.98]
+              transition-all duration-200
+              backdrop-blur-sm block"
+          >
+            Generate
+          </Link>
+        </div>
+      )}
     </motion.div>
   );
 }

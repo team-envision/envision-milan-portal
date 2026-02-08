@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export default function AboutPortal() {
   return (
-    <section className="relative py-24 bg-[#0a0a0a] overflow-hidden">
+    <section className="relative pt-24 pb-12 bg-[#0a0a0a] overflow-hidden">
       {/* Decorative Circles on Left - Two overlapping circles with line */}
       <div className="absolute left-0 top-1/2 -translate-y-1/2 translate-x-0 pointer-events-none opacity-40 scale-[0.85] origin-left">
         <svg width="367" height="316" viewBox="0 0 367 316" fill="none" xmlns="http://www.w3.org/2000/svg">
