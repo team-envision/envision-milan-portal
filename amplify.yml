@@ -11,7 +11,7 @@ applications:
           commands:
             - npx turbo run build --filter=web
       artifacts:
-        baseDirectory: .next
+        baseDirectory: .next/standalone
         files:
           - "**/*"
       cache:
