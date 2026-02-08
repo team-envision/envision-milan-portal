@@ -5,13 +5,12 @@ applications:
       phases:
         preBuild:
           commands:
-            - cd ../..
             - npm ci
         build:
           commands:
             - npx turbo run build --filter=web
       artifacts:
-        baseDirectory: apps/web/.next
+        baseDirectory: .next
         files:
           - "**/*"
       cache:
