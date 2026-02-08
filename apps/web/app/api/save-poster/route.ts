@@ -5,18 +5,18 @@ import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 // Initialize AWS Clients
 // Note: In Next.js 16/App Router, these are initialized on the server side.
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
+  region: process.env.REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.ACCESS_KEY_ID!,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY!,
   },
 });
 
 const dynamoClient = new DynamoDBClient({
-  region: process.env.AWS_REGION,
+  region: process.env.REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.ACCESS_KEY_ID!,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY!,
   },
 });
 
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 
     // Construct the public URL (assuming standard S3 public access or CloudFront)
     // If bucket is private, you might generate a presigned URL instead.
-    const imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+    const imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.REGION}.amazonaws.com/${fileName}`;
 
     // 3. Save Metadata to DynamoDB
     const dbParams = {
