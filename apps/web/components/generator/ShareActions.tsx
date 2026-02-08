@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Share2, Linkedin, Twitter, Instagram } from "lucide-react";
+import { Download, Linkedin, Twitter, Instagram } from "lucide-react";
 import { useGenerator } from "@/context/GeneratorContext";
-import { Button } from "@/components/ui/button"; // Assuming you have a UI Button, otherwise standard button works
+import { Button } from "@/components/ui/button";
 
 export default function ShareActions() {
   const { state } = useGenerator();
@@ -52,14 +52,128 @@ export default function ShareActions() {
     }
   };
 
+  const saveAndGetPublicUrl = async (): Promise<string | null> => {
+    if (!state.generatedImage) return null;
+
+    try {
+      const res = await fetch("/api/save-poster", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imageBase64: state.generatedImage,
+          theme: state.theme,
+          memory: state.memory,
+          compressedText: state.compressedText,
+        }),
+      });
+
+      if (!res.ok) return null;
+
+      const data = await res.json();
+      // Expecting backend to return { url: string }
+      return data?.url ?? null;
+    } catch (err) {
+      console.error("Failed to save poster for sharing", err);
+      return null;
+    }
+  };
+
+  const dataUrlToFile = async (dataUrl: string, fileName = "poster.png") => {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return new File([blob], fileName, { type: blob.type });
+  };
+
+  const handleShare = async (platform: "instagram" | "linkedin") => {
+    if (!state.generatedImage) return;
+
+    setIsSaving(true);
+    try {
+      const publicUrl = await saveAndGetPublicUrl();
+
+      if (platform === "linkedin") {
+        // LinkedIn shares a URL; use the public URL from backend
+        const shareTarget = publicUrl ?? state.generatedImage;
+        const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+          shareTarget,
+        )}`;
+        window.open(shareUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      if (platform === "instagram") {
+        // Try Web Share API with files (mobile browsers)
+        const canShareFiles = !!navigator.share && (navigator as any).canShare;
+
+        try {
+          const file = await dataUrlToFile(state.generatedImage, "milan-poster.png");
+
+          if ((navigator as any).canShare && (navigator as any).canShare({ files: [file] })) {
+            await (navigator as any).share({
+              files: [file],
+              title: state.theme,
+              text: state.compressedText,
+            });
+            return;
+          }
+        } catch (err) {
+          // fallthrough to fallback
+        }
+
+        // Fallback: open the image in a new tab so user can manually save/share
+        const win = window.open(state.generatedImage, "_blank", "noopener,noreferrer");
+        if (!win) {
+          // as a final fallback copy the public url to clipboard if available
+          if (publicUrl) {
+            await navigator.clipboard.writeText(publicUrl);
+            alert("Image URL copied to clipboard. Paste it into Instagram.");
+          } else {
+            alert("Unable to open share window. Please save the image and upload to Instagram.");
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Share failed", err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
-    <div className="flex justify-center w-full">
-      <Button 
+    <div className="mt-6 flex flex-wrap justify-center gap-3">
+      <Button
         onClick={handleDownload}
         disabled={isSaving}
         className="px-8 h-12 text-lg rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm transition-all min-w-[200px]"
       >
-        {isSaving ? "Saving..." : "Download"}
+        <Download className="w-4 h-4" />
+        {isSaving ? "Saving..." : "Download & Save"}
+      </Button>
+
+      <Button
+        variant="outline"
+        onClick={() => handleShare("instagram")}
+        disabled={isSaving}
+        className="flex items-center gap-2"
+        title="Share on Instagram"
+      >
+        <Instagram className="w-4 h-4" />
+        <span className="hidden sm:inline">Share</span>
+      </Button>
+
+      <Button
+        variant="outline"
+        onClick={() => handleShare("linkedin")}
+        disabled={isSaving}
+        className="flex items-center gap-2"
+        title="Share on LinkedIn"
+      >
+        <Linkedin className="w-4 h-4" />
+        <span className="hidden sm:inline">LinkedIn</span>
+      </Button>
+
+      <Button variant="outline" size="icon" title="Share on Twitter">
+        <Twitter className="w-4 h-4" />
       </Button>
     </div>
   );
