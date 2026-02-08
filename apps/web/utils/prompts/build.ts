@@ -37,7 +37,7 @@ Repeat: This is a POSTER, not a square image.
 3. FIXED TEXT & LOGO PLACEMENT
 =====================================
 
-TOP LEFT (BELOW TITLE):
+PARALLEL TO Frame B - LEFT SIDE (BELOW TITLE):
 - Vintage emblem logo: "150 Years of Vande Mataram"
 - Charkha + Indian tricolor
 - Heritage illustration style
@@ -101,7 +101,7 @@ BOTTOM RIGHT FRAME
 - Overlap applies ONLY to frames, NEVER to images
 
 -------------------------
-BOTTOM LEFT TEXT
+PARALLEL TO FRAME C - LEFT SIDE TEXT
 -------------------------
 - Quote text:
   "${input.quoteText}"
@@ -123,7 +123,7 @@ BOTTOM LEFT TEXT
 - ABSOLUTELY NO square or 1:1 outputs
 - ABSOLUTELY NO image overflow beyond Polaroid frames
 - ABSOLUTELY NO cropping or modifying user images
-- NO mentions of frames or angles on or inside Polaroids.
+- NO mentions of frames or angles on or inside Polaroids or anywhere on the poster.
 - NO extra text beyond:
   • "150 Years of Vande Mataram"
   • User quote
