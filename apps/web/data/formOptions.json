@@ -1,0 +1,166 @@
+{
+  "themes": [
+    "Heritage Convocation Gala",
+    "Gothic Revival Send-Off",
+    "Modern Scholars Summit",
+    "The Quad Legacy Moment",
+    "Candlelight Commencement",
+    "Library of Futures",
+    "Summit of Achievement",
+    "Crimson Passage",
+    "Timeless Alma Mater",
+    "New Horizons Launch"
+  ],
+  "styles": [
+    "Editorial cinema aesthetic, warm tonal mapping",
+    "Dramatic chiaroscuro, cathedral light, fine grain",
+    "Clean cinematic minimalism, sharp dynamic range",
+    "Natural light cinema, nostalgic warmth",
+    "Low-light film, intimate glow",
+    "Intellectual romance, heritage grain",
+    "Expansive cinematic panorama",
+    "Prestige drama, saturated tones",
+    "Classic portraiture, museum quality",
+    "Aspirational cinema, high contrast"
+  ],
+  "backgroundColors": [
+    "Regal Burgundy & Antique Gold",
+    "Midnight Blue & Burnished Gold",
+    "Charcoal & Champagne",
+    "Emerald & Ivory",
+    "Deep Plum & Gold",
+    "Oxford Brown & Aged Paper",
+    "Dawn Gold & Alpine Blue",
+    "Crimson & Cream",
+    "Navy & Antique Gold",
+    "Onyx & Radiant Gold"
+  ],
+  "textures": [
+    "Aged vellum blended with soft architectural blur",
+    "Soft-focus stone tracery",
+    "Gradient glass reflections",
+    "Breezy lawn blur",
+    "Velvet darkness with warm bokeh",
+    "Towering shelves in haze",
+    "Horizon gradients",
+    "Corridor depth blur",
+    "Ivy-lined masonry",
+    "Night skyline haze"
+  ],
+  "decorations": [
+    "Academic seals, laurel motifs, drifting tassels",
+    "Lantern glow, banners, rising caps",
+    "Linear light flares, subtle confetti",
+    "Bell tower silhouettes, petals in motion",
+    "Candle halos, slow drifting embers",
+    "Floating dust motes, turning pages",
+    "Wind-caught gowns, rising light",
+    "Applause lines, crest emblems",
+    "Statues, engraved dates",
+    "Fireworks, forward light trails"
+  ],
+  "frameColors": [
+    "Walnut with brushed brass accents",
+    "Blackened oak with gilt trim",
+    "Matte graphite with metallic inlay",
+    "Classic cherrywood",
+    "Dark mahogany with luminous edging",
+    "Carved oak",
+    "Weathered timber with gold lining",
+    "Polished rosewood",
+    "Heritage bronze",
+    "Sleek black with gold bevel"
+  ],
+  "presets": [
+    {
+      "theme": "Heritage Convocation Gala",
+      "style": "Editorial cinema aesthetic, warm tonal mapping",
+      "color": "Regal Burgundy & Antique Gold",
+      "texture": "Aged vellum blended with soft architectural blur",
+      "decoration": "Academic seals, laurel motifs, drifting tassels",
+      "frame": "Walnut with brushed brass accents",
+      "memory": "Years of disciplined execution, marathon nights in the stacks, caffeine-powered collaboration, and the defining walk that closed one chapter while opening another."
+    },
+    {
+      "theme": "Gothic Revival Send-Off",
+      "style": "Dramatic chiaroscuro, cathedral light, fine grain",
+      "color": "Midnight Blue & Burnished Gold",
+      "texture": "Soft-focus stone tracery",
+      "decoration": "Lantern glow, banners, rising caps",
+      "frame": "Blackened oak with gilt trim",
+      "memory": "Ambition forged in echoing corridors, alliances built on shared pressure, and a final stride into a larger arena."
+    },
+    {
+      "theme": "Modern Scholars Summit",
+      "style": "Clean cinematic minimalism, sharp dynamic range",
+      "color": "Charcoal & Champagne",
+      "texture": "Gradient glass reflections",
+      "decoration": "Linear light flares, subtle confetti",
+      "frame": "Matte graphite with metallic inlay",
+      "memory": "Innovation cycles, rapid iteration, peer momentum, and a confident pivot toward what’s next."
+    },
+    {
+      "theme": "The Quad Legacy Moment",
+      "style": "Natural light cinema, nostalgic warmth",
+      "color": "Emerald & Ivory",
+      "texture": "Breezy lawn blur",
+      "decoration": "Bell tower silhouettes, petals in motion",
+      "frame": "Classic cherrywood",
+      "memory": "Rituals, friendships, tradition, and the realization that belonging evolves into legacy."
+    },
+    {
+      "theme": "Candlelight Commencement",
+      "style": "Low-light film, intimate glow",
+      "color": "Deep Plum & Gold",
+      "texture": "Velvet darkness with warm bokeh",
+      "decoration": "Candle halos, slow drifting embers",
+      "frame": "Dark mahogany with luminous edging",
+      "memory": "Quiet resolve, shared gratitude, and a collective ignition toward future impact."
+    },
+    {
+      "theme": "Library of Futures",
+      "style": "Intellectual romance, heritage grain",
+      "color": "Oxford Brown & Aged Paper",
+      "texture": "Towering shelves in haze",
+      "decoration": "Floating dust motes, turning pages",
+      "frame": "Carved oak",
+      "memory": "Curiosity scaled into capability, mentors as catalysts, and knowledge converted into trajectory."
+    },
+    {
+      "theme": "Summit of Achievement",
+      "style": "Expansive cinematic panorama",
+      "color": "Dawn Gold & Alpine Blue",
+      "texture": "Horizon gradients",
+      "decoration": "Wind-caught gowns, rising light",
+      "frame": "Weathered timber with gold lining",
+      "memory": "Persistence, altitude gained through teamwork, and a vantage point earned."
+    },
+    {
+      "theme": "Crimson Passage",
+      "style": "Prestige drama, saturated tones",
+      "color": "Crimson & Cream",
+      "texture": "Corridor depth blur",
+      "decoration": "Applause lines, crest emblems",
+      "frame": "Polished rosewood",
+      "memory": "Threshold energy, recognition from those who shaped the journey, and momentum that refuses to plateau."
+    },
+    {
+      "theme": "Timeless Alma Mater",
+      "style": "Classic portraiture, museum quality",
+      "color": "Navy & Antique Gold",
+      "texture": "Ivy-lined masonry",
+      "decoration": "Statues, engraved dates",
+      "frame": "Heritage bronze",
+      "memory": "Roots established, identity sharpened, and gratitude for foundations that endure."
+    },
+    {
+      "theme": "New Horizons Launch",
+      "style": "Aspirational cinema, high contrast",
+      "color": "Onyx & Radiant Gold",
+      "texture": "Night skyline haze",
+      "decoration": "Fireworks, forward light trails",
+      "frame": "Sleek black with gold bevel",
+      "memory": "Courage to scale, relationships that travel forward, and a decisive move from preparation to performance."
+    }
+  ]
+}
