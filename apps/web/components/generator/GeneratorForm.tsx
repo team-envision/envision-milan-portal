@@ -9,8 +9,7 @@ import Image from "next/image";
 import { useGenerator } from "@/context/GeneratorContext";
 import { buildPosterPrompt } from "@/utils/prompts/build";
 import formOptions from "@/data/formOptions.json";
-
-/* ---------------- Cookie Utilities ---------------- */
+import { CAMPUS_BUILDINGS } from "@/data/buildings";
 
 const getCookie = (name: string): string | null => {
   if (typeof document === "undefined") return null;
@@ -44,7 +43,6 @@ const canGeneratePoster = (): boolean => {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -54,20 +52,39 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-/* ---------------- Constants ---------------- */
+const MAX_UPLOAD_SIZE = 20 * 1024 * 1024;
+const MAX_DIMENSION = 1280;
+const JPEG_QUALITY = 0.8;
 
-const MAX_UPLOAD_SIZE = 20 * 1024 * 1024; // 20MB
-const MAX_DIMENSION = 2048;
-const JPEG_QUALITY = 0.85;
+const calculateVerticalCrop = (
+  srcWidth: number,
+  srcHeight: number,
+  maxDimension: number,
+) => {
+  let sx = 0,
+    // eslint-disable-next-line prefer-const
+    sy = 0,
+    sWidth = srcWidth,
+    sHeight = srcHeight;
 
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
+  if (srcWidth >= srcHeight) {
+    const targetAspect = 3 / 4;
+    sWidth = srcHeight * targetAspect;
+    sHeight = srcHeight;
+    sx = (srcWidth - sWidth) / 2;
+  }
 
-/* ---------------- Image Compression Helper ---------------- */
+  let dWidth = sWidth;
+  let dHeight = sHeight;
+
+  if (dWidth > maxDimension || dHeight > maxDimension) {
+    const scale = maxDimension / Math.max(dWidth, dHeight);
+    dWidth = Math.round(dWidth * scale);
+    dHeight = Math.round(dHeight * scale);
+  }
+
+  return { sx, sy, sWidth, sHeight, dWidth, dHeight };
+};
 
 const compressImageToBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -79,27 +96,19 @@ const compressImageToBase64 = (file: File): Promise<string> =>
     };
 
     img.onload = () => {
-      let { width, height } = img;
-
-      if (width > height && width > MAX_DIMENSION) {
-        height = Math.round((height * MAX_DIMENSION) / width);
-        width = MAX_DIMENSION;
-      } else if (height > MAX_DIMENSION) {
-        width = Math.round((width * MAX_DIMENSION) / height);
-        height = MAX_DIMENSION;
-      }
+      const { sx, sy, sWidth, sHeight, dWidth, dHeight } =
+        calculateVerticalCrop(img.width, img.height, MAX_DIMENSION);
 
       const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = dWidth;
+      canvas.height = dHeight;
 
       const ctx = canvas.getContext("2d");
       if (!ctx) return reject(new Error("Canvas error"));
 
-      ctx.drawImage(img, 0, 0, width, height);
+      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, dWidth, dHeight);
 
       const base64 = canvas.toDataURL("image/jpeg", JPEG_QUALITY).split(",")[1];
-
       resolve(base64);
     };
 
@@ -107,7 +116,36 @@ const compressImageToBase64 = (file: File): Promise<string> =>
     reader.readAsDataURL(file);
   });
 
-/* ---------------- Schema ---------------- */
+const convertUrlToBase64 = async (url: string): Promise<string> => {
+  try {
+    const response = await fetch(url, { mode: "cors" });
+    if (!response.ok) throw new Error(`Failed to fetch ${url}`);
+    const blob = await response.blob();
+
+    const img = await createImageBitmap(blob);
+
+    const { sx, sy, sWidth, sHeight, dWidth, dHeight } = calculateVerticalCrop(
+      img.width,
+      img.height,
+      MAX_DIMENSION,
+    );
+
+    const canvas = document.createElement("canvas");
+    canvas.width = dWidth;
+    canvas.height = dHeight;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Canvas context failed");
+
+    ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, dWidth, dHeight);
+
+    const base64 = canvas.toDataURL("image/jpeg", JPEG_QUALITY).split(",")[1];
+    return base64;
+  } catch (error) {
+    console.error("S3 Processing Error:", error);
+    throw error;
+  }
+};
 
 const formSchema = z.object({
   theme: z.string().min(3, "Theme is required"),
@@ -119,29 +157,27 @@ const formSchema = z.object({
     .min(3, "Background decorations are required"),
   frameColor: z.string().min(3, "Frame color is required"),
   memory: z.string().min(5, "Memory is required"),
-
-  images: z
-    .custom<File[]>()
-    .refine((files) => files?.length === 3, "You must upload exactly 3 images.")
-    .refine(
-      (files) => files?.every((file) => file.size <= MAX_UPLOAD_SIZE),
-      "Max file size is 20MB per image.",
-    )
-    .refine(
-      (files) =>
-        files?.every((file) => ACCEPTED_IMAGE_TYPES.includes(file.type)),
-      "Only JPG, PNG, or WEBP images are allowed.",
-    ),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-/* ---------------- Component ---------------- */
+type FrameState = {
+  id: number;
+  label: string;
+  buildingId: string;
+  userImage: File | null;
+};
 
 export default function GeneratorForm() {
   const { state, setState } = useGenerator();
   const [isCompressing, setIsCompressing] = useState<boolean>(false);
   const [limitError, setLimitError] = useState<string | null>(null);
+
+  const [frames, setFrames] = useState<[FrameState, FrameState, FrameState]>([
+    { id: 0, label: "Center Frame (Main)", buildingId: "", userImage: null },
+    { id: 1, label: "Top Right Frame", buildingId: "", userImage: null },
+    { id: 2, label: "Bottom Right Frame", buildingId: "", userImage: null },
+  ]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -153,16 +189,42 @@ export default function GeneratorForm() {
       backgroundDecorations: "",
       frameColor: "",
       memory: state.memory,
-      images: [],
     },
   });
 
-  const uploadedImages = form.watch("images");
+  const updateFrame = (
+    index: 0 | 1 | 2,
+    field: keyof FrameState,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    value: any,
+  ) => {
+    setFrames((prev) => {
+      const newFrames = [...prev] as [FrameState, FrameState, FrameState];
+      newFrames[index] = { ...newFrames[index], [field]: value };
+      return newFrames;
+    });
+  };
 
   const onSubmit = async (values: FormValues): Promise<void> => {
-    /* ---- Check Cookie Limit ---- */
     if (!canGeneratePoster()) {
       setLimitError("Only two poster generations allowed.");
+      return;
+    }
+
+    const isIncomplete = frames.some((f) => !f.buildingId || !f.userImage);
+    if (isIncomplete) {
+      setLimitError(
+        "Please select a building and upload a photo for ALL 3 frames.",
+      );
+      return;
+    }
+
+    const selectedBuildings = frames.map((f) => f.buildingId);
+    const uniqueBuildings = new Set(selectedBuildings);
+    if (uniqueBuildings.size !== selectedBuildings.length) {
+      setLimitError(
+        "You cannot select the same building twice. Please choose 3 different buildings.",
+      );
       return;
     }
 
@@ -170,35 +232,26 @@ export default function GeneratorForm() {
     setState((prev) => ({ ...prev, isLoading: true }));
 
     try {
-      /* ---- Sync to Context ---- */
       setState((prev) => ({
         ...prev,
         theme: values.theme,
         backgroundColor: values.backgroundColor,
         memory: values.memory,
-        uploadedImages: values.images,
       }));
 
-      /* ---- Memory Compression ---- */
       let finalText = values.memory;
-
       if (values.memory.length > 20) {
         const compressRes = await fetch("/api/compress-memory", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ memory: values.memory }),
         });
-
         if (!compressRes.ok) throw new Error("Compression failed");
-
-        const compressData: { compressed: string } = await compressRes.json();
-
+        const compressData = await compressRes.json();
         finalText = compressData.compressed;
-
         setState((prev) => ({ ...prev, compressedText: finalText }));
       }
 
-      /* ---- Build Prompt ---- */
       const prompt = buildPosterPrompt({
         theme: values.theme,
         imageStyle: values.imageStyle,
@@ -210,29 +263,39 @@ export default function GeneratorForm() {
         quoteText: finalText,
       });
 
-      /* ---- Compress Images ---- */
       setIsCompressing(true);
 
-      const imagesBase64: string[] = await Promise.all(
-        values.images.map(compressImageToBase64),
-      );
+      const processingPromises = frames.map(async (frame) => {
+        const userBase64 = await compressImageToBase64(frame.userImage!);
+
+        const building = CAMPUS_BUILDINGS.find(
+          (b) => b.id === frame.buildingId,
+        );
+        if (!building)
+          throw new Error(`Building not found for frame ${frame.id}`);
+
+        const buildingBase64 = await convertUrlToBase64(building.url);
+
+        return [userBase64, buildingBase64];
+      });
+
+      const pairs = await Promise.all(processingPromises);
+
+      const flatImages = pairs.flat();
 
       setIsCompressing(false);
 
-      /* ---- Generate Poster ---- */
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, images: imagesBase64 }),
+        body: JSON.stringify({ prompt, images: flatImages }),
       });
 
       if (!res.ok) throw new Error("Image generation failed");
 
       const data: { imageBase64: string; mimeType: string } = await res.json();
-
       const imageUrl = `data:${data.mimeType};base64,${data.imageBase64}`;
 
-      /* ---- Increment Cookie Count ---- */
       incrementPosterCount();
 
       setState((prev) => ({
@@ -243,6 +306,7 @@ export default function GeneratorForm() {
     } catch (error) {
       console.error(error);
       setIsCompressing(false);
+      setLimitError("An error occurred while generating. Please try again.");
       setState((prev) => ({ ...prev, isLoading: false }));
     }
   };
@@ -261,9 +325,6 @@ export default function GeneratorForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* 🔹 ALL INPUT FIELDS UNCHANGED (as requested) */}
-
-          {/* Theme */}
           <FormField
             name="theme"
             control={form.control}
@@ -276,9 +337,9 @@ export default function GeneratorForm() {
                     className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
                   >
                     <option value="">Select a theme</option>
-                    {formOptions.themes.map((theme) => (
-                      <option key={theme} value={theme}>
-                        {theme}
+                    {formOptions.themes.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
                       </option>
                     ))}
                   </select>
@@ -288,7 +349,6 @@ export default function GeneratorForm() {
             )}
           />
 
-          {/* Background Color */}
           <FormField
             name="backgroundColor"
             control={form.control}
@@ -303,9 +363,9 @@ export default function GeneratorForm() {
                     className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
                   >
                     <option value="">Select a background color</option>
-                    {formOptions.backgroundColors.map((color) => (
-                      <option key={color} value={color}>
-                        {color}
+                    {formOptions.backgroundColors.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
                       </option>
                     ))}
                   </select>
@@ -315,7 +375,6 @@ export default function GeneratorForm() {
             )}
           />
 
-          {/* Background Texture */}
           <FormField
             name="backgroundTexture"
             control={form.control}
@@ -330,9 +389,9 @@ export default function GeneratorForm() {
                     className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
                   >
                     <option value="">Select a background texture</option>
-                    {formOptions.textures.map((texture) => (
-                      <option key={texture} value={texture}>
-                        {texture}
+                    {formOptions.textures.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
                       </option>
                     ))}
                   </select>
@@ -342,7 +401,6 @@ export default function GeneratorForm() {
             )}
           />
 
-          {/* Background Decorations */}
           <FormField
             name="backgroundDecorations"
             control={form.control}
@@ -356,10 +414,10 @@ export default function GeneratorForm() {
                     {...field}
                     className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
                   >
-                    <option value="">Select background decorations</option>
-                    {formOptions.decorations.map((decoration) => (
-                      <option key={decoration} value={decoration}>
-                        {decoration}
+                    <option value="">Select decorations</option>
+                    {formOptions.decorations.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
                       </option>
                     ))}
                   </select>
@@ -369,7 +427,6 @@ export default function GeneratorForm() {
             )}
           />
 
-          {/* Frame Color */}
           <FormField
             name="frameColor"
             control={form.control}
@@ -383,10 +440,10 @@ export default function GeneratorForm() {
                     {...field}
                     className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
                   >
-                    <option value="">Select a frame color</option>
-                    {formOptions.frameColors.map((frame) => (
-                      <option key={frame} value={frame}>
-                        {frame}
+                    <option value="">Select frame color</option>
+                    {formOptions.frameColors.map((f) => (
+                      <option key={f} value={f}>
+                        {f}
                       </option>
                     ))}
                   </select>
@@ -396,7 +453,6 @@ export default function GeneratorForm() {
             )}
           />
 
-          {/* Image Style */}
           <FormField
             name="imageStyle"
             control={form.control}
@@ -411,9 +467,9 @@ export default function GeneratorForm() {
                     className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
                   >
                     <option value="">Select an image style</option>
-                    {formOptions.styles.map((style) => (
-                      <option key={style} value={style}>
-                        {style}
+                    {formOptions.styles.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
                       </option>
                     ))}
                   </select>
@@ -423,7 +479,6 @@ export default function GeneratorForm() {
             )}
           />
 
-          {/* Memory */}
           <FormField
             name="memory"
             control={form.control}
@@ -444,54 +499,102 @@ export default function GeneratorForm() {
             )}
           />
 
-          {/* Images */}
-          <FormField
-            name="images"
-            control={form.control}
-            render={({ field: { onChange } }) => (
-              <FormItem>
-                <FormLabel className="text-white/90 text-lg">
-                  Upload 3 Photos
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
-                    multiple
-                    onChange={(e) => onChange(Array.from(e.target.files ?? []))}
-                    className="bg-[#1a1a1a] text-white h-14"
-                  />
-                </FormControl>
-                <FormDescription className="text-white/50">
-                  Exactly 3 images. Max 20MB each.
-                </FormDescription>
+          <div className="space-y-6 pt-4 border-t border-white/20">
+            <h3 className="text-xl text-white font-medium">
+              Customize Your Frames
+            </h3>
 
-                {uploadedImages?.length > 0 && (
-                  <div className="grid grid-cols-3 gap-4 mt-4">
-                    {uploadedImages.map((file, i) => (
-                      <img
-                        key={i}
-                        src={URL.createObjectURL(file)}
-                        alt={`preview-${i}`}
-                        className="h-24 w-full object-cover rounded-md border border-white/20"
-                      />
-                    ))}
+            {frames.map((frame, index) => (
+              <div
+                key={frame.id}
+                className="p-4 rounded-lg bg-white/5 border border-white/10 space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-semibold text-yellow-400">
+                    {frame.label}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm text-white/70">
+                      Select Location
+                    </label>
+                    <select
+                      value={frame.buildingId}
+                      onChange={(e) =>
+                        updateFrame(
+                          index as 0 | 1 | 2,
+                          "buildingId",
+                          e.target.value,
+                        )
+                      }
+                      className="w-full h-12 bg-[#1a1a1a] text-white rounded-md px-3 border border-white/20"
+                    >
+                      <option value="">-- Choose Building --</option>
+                      {CAMPUS_BUILDINGS.map((b) => (
+                        <option
+                          key={b.id}
+                          value={b.id}
+                          disabled={frames.some(
+                            (f) => f.id !== frame.id && f.buildingId === b.id,
+                          )}
+                        >
+                          {b.name}{" "}
+                          {frames.some(
+                            (f) => f.id !== frame.id && f.buildingId === b.id,
+                          )
+                            ? "(Taken)"
+                            : ""}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                )}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
-          <div className="flex justify-center mt-6">
+                  <div className="space-y-2">
+                    <label className="text-sm text-white/70">
+                      Upload Photo
+                    </label>
+                    <div className="relative">
+                      <Input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        className="bg-[#1a1a1a] text-white h-12 cursor-pointer"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null;
+                          if (file && file.size > MAX_UPLOAD_SIZE) {
+                            alert("File is too large (Max 20MB)");
+                            e.target.value = "";
+                            return;
+                          }
+                          updateFrame(index as 0 | 1 | 2, "userImage", file);
+                        }}
+                      />
+                      {frame.userImage && (
+                        <div className="absolute right-2 top-1.5 w-9 h-9 rounded overflow-hidden border border-white/50">
+                          <img
+                            src={URL.createObjectURL(frame.userImage)}
+                            className="w-full h-full object-cover"
+                            alt="preview"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-8">
             <Button
               type="submit"
               disabled={state.isLoading || isCompressing}
-              className="px-8 h-12 text-lg rounded-full bg-white/10 text-white flex items-center gap-2"
+              className="px-8 h-12 text-lg rounded-full bg-white/10 text-white flex items-center gap-2 hover:bg-white/20 transition-all"
             >
               <Image src="/images/star.png" alt="Star" width={30} height={30} />
               {isCompressing
-                ? "Compressing images..."
+                ? "Preparing images..."
                 : state.isLoading
                   ? "Generating..."
                   : "Generate Poster"}

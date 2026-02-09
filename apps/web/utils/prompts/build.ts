@@ -11,122 +11,165 @@ type PosterPromptInput = {
 
 export function buildPosterPrompt(input: PosterPromptInput) {
   return `
-Role: Expert Graphic Designer
-Task: Create a PRINT-READY POSTER on a VERTICAL RECTANGULAR CANVAS.
-ASPECT RATIO MUST BE 9:16 (PORTRAIT).
-The output MUST be a tall rectangle — NEVER square, NEVER landscape.
+ROLE: Senior Photo Compositor & Professional Poster Designer.
 
-Repeat: This is a POSTER, not a square image.
+TASK: Create a PRINT-READY, TALL VERTICAL POSTER.
+ASPECT RATIO IS STRICTLY 9:16 (PORTRAIT).
+❌ DO NOT GENERATE A SQUARE OR LANDSCAPE IMAGE.
+❌ DO NOT CROP INTO A SQUARE AT ANY STAGE.
 
-=====================================
-1. CANVAS & FORMAT (ABSOLUTE)
-=====================================
-- Canvas shape: VERTICAL RECTANGLE
-- Aspect ratio: 9:16 portrait
-- Height must be significantly greater than width
+==================================================
+1. ABSOLUTE NON-NEGOTIABLE CONSTRAINTS
+==================================================
 
-=====================================
-2. BACKGROUND (VARIABLE)
-=====================================
-- Background Color: ${input.backgroundColor}
-- Texture: ${input.backgroundTexture}
-- Decorations: ${input.backgroundDecorations}, edges only
-- Subtle top & bottom vignette to emphasize vertical height
+This task is **IMAGE COMPOSITING ONLY**, NOT IMAGE GENERATION.
 
-=====================================
-3. FIXED TEXT & LOGO PLACEMENT
-=====================================
+You are provided with EXACTLY 6 INPUT IMAGES.
+You MUST ONLY USE these images.
+❌ DO NOT generate new people, faces, buildings, or environments.
+❌ DO NOT redraw, stylize, enhance, or reinterpret any real person.
 
-PARALLEL TO Frame B - LEFT SIDE (BELOW TITLE):
-- Vintage emblem logo: "150 Years of Vande Mataram"
-- Charkha + Indian tricolor
-- Heritage illustration style
-- NO frame, NO border, NO modern effects
+--------------------------------------------------
+IDENTITY PRESERVATION (CRITICAL – ZERO TOLERANCE)
+--------------------------------------------------
+• Faces from user photos MUST remain 100% identical.
+• No face reshaping, beautification, AI enhancement, or stylization.
+• No changes to:
+  - Facial structure
+  - Skin tone
+  - Hair
+  - Beard
+  - Glasses
+  - Expression
+• Faces must remain SHARP, CLEAR, and RECOGNIZABLE.
+• If a face is altered, the output is INVALID.
 
-=====================================
-4. IMAGE HANDLING RULES (CRITICAL)
-=====================================
-User-provided images MUST be used AS-IS.
+--------------------------------------------------
+BODY & CLOTHING RULES
+--------------------------------------------------
+• Body posture may be naturally adjusted ONLY for placement realism.
+• Clothing must remain the same (no color, texture, or style changes).
+• Do not invent accessories, props, or uniforms.
 
-STRICT RULES:
-- DO NOT redraw images
-- DO NOT alter faces, lighting, background, or composition
-- DO NOT add AI-generated elements inside photos
-- DO NOT extend images beyond their edges
-- Treat images as REAL printed photographs
+--------------------------------------------------
+BUILDING LOCK RULE (CRITICAL)
+--------------------------------------------------
+Each subject MUST be placed ONLY into its assigned building.
+❌ NO swapping.
+❌ NO mixing environments.
 
-=====================================
-5. FIXED IMAGE LAYOUT (POLAROID FRAMES)
-=====================================
-All images must be placed STRICTLY INSIDE realistic ${input.frameColor} Polaroid frames.
+==================================================
+2. EXACT INPUT IMAGE MAPPING (LOCKED)
+==================================================
 
-POLAROID CONSTRUCTION RULES:
-- Each Polaroid has a solid outer frame
-- Inside the frame is a clean white mat border
-- The photograph is mounted INSIDE the mat window
-- The image must be fully contained within the frame opening
-- NO part of any image may cross, touch, or overflow the frame edges
-- NO bleed, NO edge escape, NO cropped spill
+You are receiving 6 images in THIS ORDER ONLY:
 
-Soft natural shadows only.
+PAIR A – CENTER FRAME (LARGEST)
+• Subject: Input Image 1 (User Photo)
+• Background: Input Image 2 (Building Photo)
+→ ACTION:
+  - Cleanly cut the subject from Image 1.
+  - Place them naturally into Image 2.
+  - Match lighting, perspective, and scale.
+  - Keep face 100% unaltered.
 
--------------------------
-TOP RIGHT FRAME
--------------------------
-- Frame B (Medium)
-- Position: Top-right quadrant
-- Contains: [Input Image 2] (unchanged, fully contained)
-- Tilt: +15° clockwise
-- Slightly overlaps the center frame below
-- Overlap applies ONLY to frames, NEVER to images
-- Center frame image must NOT be visible behind overlap
+PAIR B – TOP RIGHT FRAME
+• Subject: Input Image 3 (User Photo)
+• Background: Input Image 4 (Building Photo)
+→ Same compositing rules apply.
 
--------------------------
-CENTER FRAME (FOCAL)
--------------------------
-- Frame A (Largest)
-- Position: Slightly left of vertical center
-- Contains: [Input Image 1] (unchanged, fully contained)
-- Tilt: -10° counter-clockwise
-- Dominates the vertical height
+PAIR C – BOTTOM RIGHT FRAME
+• Subject: Input Image 5 (User Photo)
+• Background: Input Image 6 (Building Photo)
+→ Same compositing rules apply.
 
--------------------------
-BOTTOM RIGHT FRAME
--------------------------
-- Frame C (Medium)
-- Position: Bottom-right quadrant
-- Contains: [Input Image 3] (unchanged, fully contained)
-- Tilt: +15° clockwise
-- Overlaps the center frame above
-- Overlap applies ONLY to frames, NEVER to images
+==================================================
+3. POSTER CANVAS & BACKGROUND
+==================================================
 
--------------------------
-PARALLEL TO FRAME C - LEFT SIDE TEXT
--------------------------
-- Quote text:
-  "${input.quoteText}"
-- Position: Bottom-left, parallel to bottom-right frame
-- Font: Elegant cursive / handwritten
-- Ink color: Dark brown
+Canvas:
+• Orientation: Vertical Portrait
+• Aspect Ratio: 9:16
+• Resolution: High quality, print-ready
 
-=====================================
-6. DEPTH & REALISM
-=====================================
-- Subtle shadows under frames
-- Paper texture visible
-- Archival convocation album feel
-- No digital UI look
+Background Design:
+• Base Color: ${input.backgroundColor}
+• Texture: ${input.backgroundTexture}
+• Decorations: ${input.backgroundDecorations}
+  → Decorations MUST remain subtle and restricted to edges/corners.
+  → DO NOT interfere with faces or frames.
 
-=====================================
-7. ABSOLUTE CONSTRAINTS (DO NOT BREAK)
-=====================================
-- ABSOLUTELY NO square or 1:1 outputs
-- ABSOLUTELY NO image overflow beyond Polaroid frames
-- ABSOLUTELY NO cropping or modifying user images
-- NO mentions of frames or angles on or inside Polaroids or anywhere on the poster.
-- NO extra text beyond:
-  • "150 Years of Vande Mataram"
-  • User quote
-- NO UI elements, labels, watermarks
+==================================================
+4. FIXED GRAPHIC ELEMENTS (MANDATORY)
+==================================================
+
+• TOP LEFT:
+  - Place the official “150 Years of Vande Mataram” emblem.
+  - Clean, flat, non-distorted.
+
+• BOTTOM LEFT:
+  - Quote text: "${input.quoteText}"
+  - Font: Elegant cursive / handwritten style
+  - High contrast for readability
+  - Do NOT overlap frames or faces.
+
+==================================================
+5. POLAROID FRAME LAYOUT (STRICT)
+==================================================
+
+All composited images MUST be inside realistic Polaroid-style frames.
+
+Frame Properties:
+• Frame Color: ${input.frameColor}
+• Subtle drop shadow
+• Realistic thickness
+• No glow, no neon, no distortion
+
+--------------------------------------------------
+FRAME POSITIONS
+--------------------------------------------------
+
+FRAME 1 – CENTER (LARGEST)
+• Contains: PAIR A composite
+• Position: Center-left dominant area
+• Rotation: -10°
+• Must be the visual focus of the poster
+
+FRAME 2 – TOP RIGHT (MEDIUM)
+• Contains: PAIR B composite
+• Position: Top-right quadrant
+• Rotation: +15°
+
+FRAME 3 – BOTTOM RIGHT (MEDIUM)
+• Contains: PAIR C composite
+• Position: Bottom-right quadrant
+• Rotation: +15°
+
+Frames must NOT overlap faces or text.
+
+==================================================
+6. REALISM REQUIREMENTS
+==================================================
+• Match lighting direction between subject and background
+• Match color temperature
+• Correct scale (no oversized or undersized people)
+• Proper ground contact (no floating subjects)
+• Clean edges (no halos, jagged cutouts)
+
+==================================================
+7. FINAL VALIDATION CHECK (MANDATORY)
+==================================================
+
+Before finishing, verify ALL of the following:
+
+☑ Image is tall, vertical, 9:16  
+☑ No faces altered in any way  
+☑ Correct subject is inside correct building  
+☑ Exactly 3 Polaroid frames present  
+☑ Emblem top-left, quote bottom-left  
+☑ No generated people or buildings  
+☑ Poster looks professional and print-ready  
+
+If ANY rule is violated, the output is INVALID.
 `;
 }

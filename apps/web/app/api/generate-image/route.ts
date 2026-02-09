@@ -7,9 +7,9 @@ export async function POST(req: Request) {
   try {
     const { prompt, images } = await req.json();
 
-    if (!prompt || !images || images.length !== 3) {
+    if (!prompt || !images || images.length !== 6) {
       return NextResponse.json(
-        { error: "Prompt and exactly 3 images are required" },
+        { error: "Prompt and exactly 6 images (3 pairs) are required" },
         { status: 400 },
       );
     }
@@ -18,27 +18,14 @@ export async function POST(req: Request) {
       model: "gemini-2.5-flash-image",
     });
 
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          mimeType: "image/jpeg",
-          data: images[0],
-        },
+    const imageParts = images.map((imgData: string) => ({
+      inlineData: {
+        mimeType: "image/jpeg",
+        data: imgData,
       },
-      {
-        inlineData: {
-          mimeType: "image/jpeg",
-          data: images[1],
-        },
-      },
-      {
-        inlineData: {
-          mimeType: "image/jpeg",
-          data: images[2],
-        },
-      },
-    ]);
+    }));
+
+    const result = await model.generateContent([prompt, ...imageParts]);
 
     const candidate = result.response.candidates?.[0];
     const imagePart = candidate?.content?.parts?.find(
