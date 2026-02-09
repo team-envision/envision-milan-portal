@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
 
+// Keep your samples array exactly as it was
 const samples = [
   {
     id: 1,
@@ -81,6 +82,8 @@ const ITEMS_PER_PAGE = 6;
 
 export default function GalleryCarousel() {
   const [posters, setPosters] = useState<any[]>([]);
+  // 1. Add loading state initialized to TRUE
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
@@ -89,8 +92,13 @@ export default function GalleryCarousel() {
     (async () => {
       try {
         const res = await fetch("/api/posters");
-        if (!res.ok) return;
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch");
+        }
+
         const data = await res.json();
+
         if (!mounted) return;
 
         const items = Array.isArray(data.items) ? data.items : [];
@@ -104,8 +112,12 @@ export default function GalleryCarousel() {
 
         setPosters(items);
       } catch (err) {
-        // ignore - keep sample placeholders
+        // If error occurs, we just log it.
+        // posters remains [], so 'displayPosters' will naturally fall back to 'samples'
         console.error("Failed to fetch posters", err);
+      } finally {
+        // 2. STOP loading regardless of success or failure
+        if (mounted) setIsLoading(false);
       }
     })();
 
@@ -114,7 +126,10 @@ export default function GalleryCarousel() {
     };
   }, []);
 
-  const displayPosters = posters.length ? posters : samples;
+  // 3. Logic: If loading, don't calculate anything yet.
+  //    If loaded, check if we have posters; if not, use samples.
+  const displayPosters = posters.length > 0 ? posters : samples;
+
   const totalPages = Math.ceil(displayPosters.length / ITEMS_PER_PAGE);
   const startIdx = currentPage * ITEMS_PER_PAGE;
   const endIdx = startIdx + ITEMS_PER_PAGE;
@@ -129,7 +144,7 @@ export default function GalleryCarousel() {
   };
 
   return (
-    <section id="gallery" className="py-12 bg-[#0a0a0a]">
+    <section id="gallery" className="py-12 bg-[#0a0a0a] min-h-[600px]">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
@@ -143,146 +158,168 @@ export default function GalleryCarousel() {
             Sample Generations
           </h2>
           <p className="mt-4 text-white/50 max-w-xl mx-auto">
-            Get inspired by memories created by fellow SRMites celebrating 40 years of legacy
+            Get inspired by memories created by fellow SRMites celebrating 40
+            years of legacy
           </p>
         </motion.div>
 
-        {/* Polaroid Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
-        >
-          {currentPosters.map((sample: any, idx: number) => {
-            // Determine image and metadata
-            const isPoster = !!posters.length;
-            const imageSrc = isPoster ? sample.imageUrl : sample.image;
-            const title = isPoster ? (sample.theme || "SRM Memory") : sample.title;
-            const submitter = isPoster ? "SRM University" : sample.submitter;
-            const time = isPoster
-              ? (() => {
-                  try {
-                    const days = Math.floor((Date.now() - new Date(sample.createdAt).getTime()) / (1000 * 60 * 60 * 24));
-                    return days <= 0 ? "today" : `${days} days`;
-                  } catch (e) {
-                    return "recent";
-                  }
-                })()
-              : sample.time;
+        {/* 4. Loading Indicator: Show this while fetching */}
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-200"></div>
+          </div>
+        ) : (
+          /* 5. Actual Grid: Only shown when data is ready */
+          <>
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
+            >
+              {currentPosters.map((sample: any, idx: number) => {
+                // Determine image and metadata
+                const isPoster = !!posters.length;
+                const imageSrc = isPoster ? sample.imageUrl : sample.image;
+                const title = isPoster
+                  ? sample.theme || "SRM Memory"
+                  : sample.title;
+                const submitter = isPoster
+                  ? "SRM University"
+                  : sample.submitter;
+                const time = isPoster
+                  ? (() => {
+                      try {
+                        const days = Math.floor(
+                          (Date.now() - new Date(sample.createdAt).getTime()) /
+                            (1000 * 60 * 60 * 24),
+                        );
+                        return days <= 0 ? "today" : `${days} days`;
+                      } catch (e) {
+                        return "recent";
+                      }
+                    })()
+                  : sample.time;
 
-            const rotations = [-3, 2, -1, 3, -2, 1];
-            const rotation = rotations[idx % rotations.length];
+                const rotations = [-3, 2, -1, 3, -2, 1];
+                const rotation = rotations[idx % rotations.length];
 
-            return (
-              <motion.div
-                key={isPoster ? sample.id : sample.id}
-                custom={rotation}
-                variants={cardVariants}
-                whileHover={{
-                  rotate: 0,
-                  scale: 1.05,
-                  zIndex: 10,
-                  transition: { duration: 0.3 },
-                }}
-                className="group relative cursor-pointer"
-                style={{ transformOrigin: "center bottom" }}
-              >
-                {/* Tape decoration */}
-                <div
-                  className="absolute -top-2 left-1/2 -translate-x-1/2 w-10 h-4 z-10
-                    bg-gradient-to-b from-amber-100/90 to-amber-200/80
-                    shadow-sm"
-                  style={{ transform: `translateX(-50%) rotate(${rotation > 0 ? 3 : -3}deg)` }}
-                />
-
-                {/* Polaroid card */}
-                <div className="bg-white p-3 pb-6 shadow-xl 
-                  group-hover:shadow-2xl group-hover:shadow-black/40
-                  transition-shadow duration-300">
-                  {/* Image container */}
-                  <div className="aspect-square bg-gray-100 overflow-hidden">
-                    <img
-                      src={imageSrc}
-                      alt={title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                return (
+                  <motion.div
+                    key={isPoster ? sample.id : sample.id}
+                    custom={rotation}
+                    variants={cardVariants}
+                    whileHover={{
+                      rotate: 0,
+                      scale: 1.05,
+                      zIndex: 10,
+                      transition: { duration: 0.3 },
+                    }}
+                    className="group relative cursor-pointer"
+                    style={{ transformOrigin: "center bottom" }}
+                  >
+                    {/* Tape decoration */}
+                    <div
+                      className="absolute -top-2 left-1/2 -translate-x-1/2 w-10 h-4 z-10
+                        bg-gradient-to-b from-amber-100/90 to-amber-200/80
+                        shadow-sm"
+                      style={{
+                        transform: `translateX(-50%) rotate(${rotation > 0 ? 3 : -3}deg)`,
+                      }}
                     />
-                  </div>
 
-                  {/* Caption */}
-                  <div className="mt-3 text-center">
-                    <p className="font-medium text-gray-800 text-sm">
-                      {title}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {submitter} • {time}
-                    </p>
-                  </div>
-                </div>
+                    {/* Polaroid card */}
+                    <div
+                      className="bg-white p-3 pb-6 shadow-xl 
+                      group-hover:shadow-2xl group-hover:shadow-black/40
+                      transition-shadow duration-300"
+                    >
+                      {/* Image container */}
+                      <div className="aspect-square bg-gray-100 overflow-hidden">
+                        <img
+                          src={imageSrc}
+                          alt={title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                      </div>
+
+                      {/* Caption */}
+                      <div className="mt-3 text-center">
+                        <p className="font-medium text-gray-800 text-sm">
+                          {title}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {submitter} • {time}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.3,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="mt-16 flex items-center justify-center gap-6"
+              >
+                <button
+                  onClick={handlePrevious}
+                  className="p-3 rounded-full border border-white/20 text-white
+                    hover:bg-white/5 hover:border-white/30 transition-all duration-200"
+                  aria-label="Previous page"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+
+                <span className="text-white/60 text-sm font-medium">
+                  {currentPage + 1} / {totalPages}
+                </span>
+
+                <button
+                  onClick={handleNext}
+                  className="p-3 rounded-full border border-white/20 text-white
+                    hover:bg-white/5 hover:border-white/30 transition-all duration-200"
+                  aria-label="Next page"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
               </motion.div>
-            );
-          })}
-        </motion.div>
-
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-16 flex items-center justify-center gap-6"
-          >
-            {/* Left Arrow */}
-            <button
-              onClick={handlePrevious}
-              className="p-3 rounded-full border border-white/20 text-white
-                hover:bg-white/5 hover:border-white/30 transition-all duration-200"
-              aria-label="Previous page"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-
-            {/* Page Indicator */}
-            <span className="text-white/60 text-sm font-medium">
-              {currentPage + 1} / {totalPages}
-            </span>
-
-            {/* Right Arrow */}
-            <button
-              onClick={handleNext}
-              className="p-3 rounded-full border border-white/20 text-white
-                hover:bg-white/5 hover:border-white/30 transition-all duration-200"
-              aria-label="Next page"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </motion.div>
+            )}
+          </>
         )}
       </div>
     </section>
