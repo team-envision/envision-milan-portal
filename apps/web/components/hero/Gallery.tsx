@@ -130,17 +130,20 @@ export default function GalleryCarousel() {
   //    If loaded, check if we have posters; if not, use samples.
   const displayPosters = posters.length > 0 ? posters : samples;
 
-  const totalPages = Math.ceil(displayPosters.length / ITEMS_PER_PAGE);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(displayPosters.length / ITEMS_PER_PAGE),
+  );
   const startIdx = currentPage * ITEMS_PER_PAGE;
   const endIdx = startIdx + ITEMS_PER_PAGE;
   const currentPosters = displayPosters.slice(startIdx, endIdx);
 
   const handlePrevious = () => {
-    setCurrentPage((prev) => (prev > 0 ? prev - 1 : totalPages - 1));
+    setCurrentPage((prev) => Math.max(0, prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentPage((prev) => (prev < totalPages - 1 ? prev + 1 : 0));
+    setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
   };
 
   return (
@@ -172,10 +175,10 @@ export default function GalleryCarousel() {
           /* 5. Actual Grid: Only shown when data is ready */
           <>
             <motion.div
+              key={`gallery-page-${currentPage}`}
               variants={containerVariants}
               initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
+              animate="visible"
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
             >
               {currentPosters.map((sample: any, idx: number) => {
@@ -207,7 +210,7 @@ export default function GalleryCarousel() {
 
                 return (
                   <motion.div
-                    key={isPoster ? sample.id : sample.id}
+                    key={`${currentPage}-${isPoster ? sample.id : sample.id}-${idx}`}
                     custom={rotation}
                     variants={cardVariants}
                     whileHover={{

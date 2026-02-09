@@ -332,17 +332,19 @@ export default function GeneratorForm() {
               <FormItem>
                 <FormLabel className="text-white/90 text-lg">Theme</FormLabel>
                 <FormControl>
-                  <select
-                    {...field}
-                    className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
-                  >
-                    <option value="">Select a theme</option>
-                    {formOptions.themes.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    <Input
+                      {...field}
+                      list="theme-options"
+                      placeholder="Choose a theme or type your own"
+                      className="bg-[#1a1a1a] text-white h-12"
+                    />
+                    <datalist id="theme-options">
+                      {formOptions.themes.map((t) => (
+                        <option key={t} value={t} />
+                      ))}
+                    </datalist>
+                  </>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -358,17 +360,19 @@ export default function GeneratorForm() {
                   Background Color
                 </FormLabel>
                 <FormControl>
-                  <select
-                    {...field}
-                    className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
-                  >
-                    <option value="">Select a background color</option>
-                    {formOptions.backgroundColors.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    <Input
+                      {...field}
+                      list="background-color-options"
+                      placeholder="Choose a color or type your own"
+                      className="bg-[#1a1a1a] text-white h-12"
+                    />
+                    <datalist id="background-color-options">
+                      {formOptions.backgroundColors.map((c) => (
+                        <option key={c} value={c} />
+                      ))}
+                    </datalist>
+                  </>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -384,17 +388,19 @@ export default function GeneratorForm() {
                   Background Texture
                 </FormLabel>
                 <FormControl>
-                  <select
-                    {...field}
-                    className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
-                  >
-                    <option value="">Select a background texture</option>
-                    {formOptions.textures.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    <Input
+                      {...field}
+                      list="background-texture-options"
+                      placeholder="Choose a texture or type your own"
+                      className="bg-[#1a1a1a] text-white h-12"
+                    />
+                    <datalist id="background-texture-options">
+                      {formOptions.textures.map((t) => (
+                        <option key={t} value={t} />
+                      ))}
+                    </datalist>
+                  </>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -410,17 +416,19 @@ export default function GeneratorForm() {
                   Background Decorations
                 </FormLabel>
                 <FormControl>
-                  <select
-                    {...field}
-                    className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
-                  >
-                    <option value="">Select decorations</option>
-                    {formOptions.decorations.map((d) => (
-                      <option key={d} value={d}>
-                        {d}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    <Input
+                      {...field}
+                      list="background-decorations-options"
+                      placeholder="Choose decorations or type your own"
+                      className="bg-[#1a1a1a] text-white h-12"
+                    />
+                    <datalist id="background-decorations-options">
+                      {formOptions.decorations.map((d) => (
+                        <option key={d} value={d} />
+                      ))}
+                    </datalist>
+                  </>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -436,17 +444,19 @@ export default function GeneratorForm() {
                   Frame Color
                 </FormLabel>
                 <FormControl>
-                  <select
-                    {...field}
-                    className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
-                  >
-                    <option value="">Select frame color</option>
-                    {formOptions.frameColors.map((f) => (
-                      <option key={f} value={f}>
-                        {f}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    <Input
+                      {...field}
+                      list="frame-color-options"
+                      placeholder="Choose a frame color or type your own"
+                      className="bg-[#1a1a1a] text-white h-12"
+                    />
+                    <datalist id="frame-color-options">
+                      {formOptions.frameColors.map((f) => (
+                        <option key={f} value={f} />
+                      ))}
+                    </datalist>
+                  </>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -462,17 +472,19 @@ export default function GeneratorForm() {
                   Image Output Style
                 </FormLabel>
                 <FormControl>
-                  <select
-                    {...field}
-                    className="bg-[#1a1a1a] text-white h-12 w-full rounded-md px-3"
-                  >
-                    <option value="">Select an image style</option>
-                    {formOptions.styles.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
+                  <>
+                    <Input
+                      {...field}
+                      list="image-style-options"
+                      placeholder="Choose a style or type your own"
+                      className="bg-[#1a1a1a] text-white h-12"
+                    />
+                    <datalist id="image-style-options">
+                      {formOptions.styles.map((s) => (
+                        <option key={s} value={s} />
+                      ))}
+                    </datalist>
+                  </>
                 </FormControl>
                 <FormMessage />
               </FormItem>

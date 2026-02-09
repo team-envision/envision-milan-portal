@@ -144,7 +144,7 @@ export default function ShareActions() {
       <Button
         onClick={handleDownload}
         disabled={isSaving}
-        className="px-8 h-12 text-lg rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm transition-all min-w-[200px]"
+        className="h-12 min-w-[200px] px-6 text-lg rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/10 backdrop-blur-sm transition-all flex items-center justify-center gap-2"
       >
         <Download className="w-4 h-4" />
         {isSaving ? "Saving..." : "Download & Save"}
@@ -154,26 +154,31 @@ export default function ShareActions() {
         variant="outline"
         onClick={() => handleShare("instagram")}
         disabled={isSaving}
-        className="flex items-center gap-2"
+        className="h-12 min-w-[200px] px-6 text-lg rounded-full flex items-center justify-center gap-2"
         title="Share on Instagram"
       >
         <Instagram className="w-4 h-4" />
-        <span className="hidden sm:inline">Share</span>
+        <span className="hidden sm:inline">Instagram</span>
       </Button>
 
       <Button
         variant="outline"
         onClick={() => handleShare("linkedin")}
         disabled={isSaving}
-        className="flex items-center gap-2"
+        className="h-12 min-w-[200px] px-6 text-lg rounded-full flex items-center justify-center gap-2"
         title="Share on LinkedIn"
       >
         <Linkedin className="w-4 h-4" />
         <span className="hidden sm:inline">LinkedIn</span>
       </Button>
 
-      <Button variant="outline" size="icon" title="Share on Twitter">
+      <Button
+        variant="outline"
+        title="Share on Twitter"
+        className="h-12 min-w-[200px] px-6 text-lg rounded-full flex items-center justify-center gap-2"
+      >
         <Twitter className="w-4 h-4" />
+        <span className="hidden sm:inline">Twitter</span>
       </Button>
     </div>
   );
