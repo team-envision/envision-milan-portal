@@ -30,7 +30,7 @@ export default function Navbar() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-6 left-0 right-0 z-50 px-8 flex items-center justify-center pointer-events-none"
+      className="absolute top-6 left-0 right-0 z-50 px-8 flex items-center justify-center pointer-events-none"
     >
       {/* SRM Logo - Absolute Left */}
       <div className="absolute left-8 pointer-events-auto">
