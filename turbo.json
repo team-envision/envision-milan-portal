@@ -1,5 +1,15 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "DYNAMODB_TABLE_NAME",
+    "S3_BUCKET_NAME",
+    "REGION",
+    "AWS_REGION",
+    "GEMINI_API_KEY",
+    "ACCESS_KEY_ID",
+    "SECRET_ACCESS_KEY",
+    "NODE_ENV"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
