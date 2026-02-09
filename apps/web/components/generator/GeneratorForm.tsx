@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -10,6 +12,17 @@ import { useGenerator } from "@/context/GeneratorContext";
 import { buildPosterPrompt } from "@/utils/prompts/build";
 import formOptions from "@/data/formOptions.json";
 import { CAMPUS_BUILDINGS } from "@/data/buildings";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 const getCookie = (name: string): string | null => {
   if (typeof document === "undefined") return null;
@@ -40,18 +53,6 @@ const canGeneratePoster = (): boolean => {
   return currentCount < MAX_POSTER_LIMIT;
 };
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-
 const MAX_UPLOAD_SIZE = 20 * 1024 * 1024;
 const MAX_DIMENSION = 1280;
 const JPEG_QUALITY = 0.8;
@@ -62,7 +63,6 @@ const calculateVerticalCrop = (
   maxDimension: number,
 ) => {
   let sx = 0,
-    // eslint-disable-next-line prefer-const
     sy = 0,
     sWidth = srcWidth,
     sHeight = srcHeight;
@@ -147,6 +147,41 @@ const convertUrlToBase64 = async (url: string): Promise<string> => {
   }
 };
 
+const overlayFrame = (
+  base64Image: string,
+  mimeType: string,
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new window.Image();
+    const frame = new window.Image();
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      reject(new Error("Canvas context failed"));
+      return;
+    }
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      ctx.drawImage(img, 0, 0);
+
+      frame.onload = () => {
+        ctx.drawImage(frame, 0, 0, img.width, img.height);
+        resolve(canvas.toDataURL(mimeType));
+      };
+
+      frame.onerror = () => reject(new Error("Failed to load frame image"));
+      frame.src = "/logo-frame.png";
+    };
+
+    img.onerror = () => reject(new Error("Failed to load generated image"));
+    img.src = `data:${mimeType};base64,${base64Image}`;
+  });
+};
+
 const formSchema = z.object({
   theme: z.string().min(3, "Theme is required"),
   imageStyle: z.string().min(3, "Image style is required"),
@@ -195,7 +230,6 @@ export default function GeneratorForm() {
   const updateFrame = (
     index: 0 | 1 | 2,
     field: keyof FrameState,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
   ) => {
     setFrames((prev) => {
@@ -294,13 +328,17 @@ export default function GeneratorForm() {
       if (!res.ok) throw new Error("Image generation failed");
 
       const data: { imageBase64: string; mimeType: string } = await res.json();
-      const imageUrl = `data:${data.mimeType};base64,${data.imageBase64}`;
+
+      const compositedImageUrl = await overlayFrame(
+        data.imageBase64,
+        data.mimeType,
+      );
 
       incrementPosterCount();
 
       setState((prev) => ({
         ...prev,
-        generatedImage: imageUrl,
+        generatedImage: compositedImageUrl,
         isLoading: false,
       }));
     } catch (error) {
@@ -332,20 +370,18 @@ export default function GeneratorForm() {
               <FormItem>
                 <FormLabel className="text-white/90 text-lg">Theme</FormLabel>
                 <FormControl>
-                  <>
-                    <Input
-                      {...field}
-                      list="theme-options"
-                      placeholder="Choose a theme or type your own"
-                      className="bg-[#1a1a1a] text-white h-12"
-                    />
-                    <datalist id="theme-options">
-                      {formOptions.themes.map((t) => (
-                        <option key={t} value={t} />
-                      ))}
-                    </datalist>
-                  </>
+                  <Input
+                    {...field}
+                    list="theme-options"
+                    placeholder="Choose a theme or type your own"
+                    className="bg-[#1a1a1a] text-white h-12"
+                  />
                 </FormControl>
+                <datalist id="theme-options">
+                  {formOptions.themes.map((t) => (
+                    <option key={t} value={t} />
+                  ))}
+                </datalist>
                 <FormMessage />
               </FormItem>
             )}
@@ -360,20 +396,18 @@ export default function GeneratorForm() {
                   Background Color
                 </FormLabel>
                 <FormControl>
-                  <>
-                    <Input
-                      {...field}
-                      list="background-color-options"
-                      placeholder="Choose a color or type your own"
-                      className="bg-[#1a1a1a] text-white h-12"
-                    />
-                    <datalist id="background-color-options">
-                      {formOptions.backgroundColors.map((c) => (
-                        <option key={c} value={c} />
-                      ))}
-                    </datalist>
-                  </>
+                  <Input
+                    {...field}
+                    list="background-color-options"
+                    placeholder="Choose a color or type your own"
+                    className="bg-[#1a1a1a] text-white h-12"
+                  />
                 </FormControl>
+                <datalist id="background-color-options">
+                  {formOptions.backgroundColors.map((c) => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
                 <FormMessage />
               </FormItem>
             )}
@@ -388,20 +422,18 @@ export default function GeneratorForm() {
                   Background Texture
                 </FormLabel>
                 <FormControl>
-                  <>
-                    <Input
-                      {...field}
-                      list="background-texture-options"
-                      placeholder="Choose a texture or type your own"
-                      className="bg-[#1a1a1a] text-white h-12"
-                    />
-                    <datalist id="background-texture-options">
-                      {formOptions.textures.map((t) => (
-                        <option key={t} value={t} />
-                      ))}
-                    </datalist>
-                  </>
+                  <Input
+                    {...field}
+                    list="background-texture-options"
+                    placeholder="Choose a texture or type your own"
+                    className="bg-[#1a1a1a] text-white h-12"
+                  />
                 </FormControl>
+                <datalist id="background-texture-options">
+                  {formOptions.textures.map((t) => (
+                    <option key={t} value={t} />
+                  ))}
+                </datalist>
                 <FormMessage />
               </FormItem>
             )}
@@ -416,20 +448,18 @@ export default function GeneratorForm() {
                   Background Decorations
                 </FormLabel>
                 <FormControl>
-                  <>
-                    <Input
-                      {...field}
-                      list="background-decorations-options"
-                      placeholder="Choose decorations or type your own"
-                      className="bg-[#1a1a1a] text-white h-12"
-                    />
-                    <datalist id="background-decorations-options">
-                      {formOptions.decorations.map((d) => (
-                        <option key={d} value={d} />
-                      ))}
-                    </datalist>
-                  </>
+                  <Input
+                    {...field}
+                    list="background-decorations-options"
+                    placeholder="Choose decorations or type your own"
+                    className="bg-[#1a1a1a] text-white h-12"
+                  />
                 </FormControl>
+                <datalist id="background-decorations-options">
+                  {formOptions.decorations.map((d) => (
+                    <option key={d} value={d} />
+                  ))}
+                </datalist>
                 <FormMessage />
               </FormItem>
             )}
@@ -444,20 +474,18 @@ export default function GeneratorForm() {
                   Frame Color
                 </FormLabel>
                 <FormControl>
-                  <>
-                    <Input
-                      {...field}
-                      list="frame-color-options"
-                      placeholder="Choose a frame color or type your own"
-                      className="bg-[#1a1a1a] text-white h-12"
-                    />
-                    <datalist id="frame-color-options">
-                      {formOptions.frameColors.map((f) => (
-                        <option key={f} value={f} />
-                      ))}
-                    </datalist>
-                  </>
+                  <Input
+                    {...field}
+                    list="frame-color-options"
+                    placeholder="Choose a frame color or type your own"
+                    className="bg-[#1a1a1a] text-white h-12"
+                  />
                 </FormControl>
+                <datalist id="frame-color-options">
+                  {formOptions.frameColors.map((f) => (
+                    <option key={f} value={f} />
+                  ))}
+                </datalist>
                 <FormMessage />
               </FormItem>
             )}
@@ -472,20 +500,18 @@ export default function GeneratorForm() {
                   Image Output Style
                 </FormLabel>
                 <FormControl>
-                  <>
-                    <Input
-                      {...field}
-                      list="image-style-options"
-                      placeholder="Choose a style or type your own"
-                      className="bg-[#1a1a1a] text-white h-12"
-                    />
-                    <datalist id="image-style-options">
-                      {formOptions.styles.map((s) => (
-                        <option key={s} value={s} />
-                      ))}
-                    </datalist>
-                  </>
+                  <Input
+                    {...field}
+                    list="image-style-options"
+                    placeholder="Choose a style or type your own"
+                    className="bg-[#1a1a1a] text-white h-12"
+                  />
                 </FormControl>
+                <datalist id="image-style-options">
+                  {formOptions.styles.map((s) => (
+                    <option key={s} value={s} />
+                  ))}
+                </datalist>
                 <FormMessage />
               </FormItem>
             )}
