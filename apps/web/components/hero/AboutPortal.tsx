@@ -45,7 +45,7 @@ export default function AboutPortal() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 max-w-6xl mx-auto px-6"
       >
-        <div className="md:w-2/3 text-left">
+        <div className=" text-center">
           <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight">
             About the Portal
           </h2>

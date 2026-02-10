@@ -312,7 +312,8 @@ export default function GeneratorForm() {
   };
 
   return (
-    <div className="bg-transparent p-8 rounded-xl border border-white/20">
+    // Updated bg-transparent to bg-[#2D130A]
+    <div className="bg-[#2D130A] p-8 rounded-xl border border-white/50">
       <h2 className="text-3xl font-semibold mb-8 text-center text-white">
         Create Your Memory
       </h2>
@@ -511,7 +512,7 @@ export default function GeneratorForm() {
             )}
           />
 
-          <div className="space-y-6 pt-4 border-t border-white/20">
+          <div className="space-y-6 pt-4 border-t border-white/50">
             <h3 className="text-xl text-white font-medium">
               Customize Your Frames
             </h3>
@@ -522,7 +523,7 @@ export default function GeneratorForm() {
                 className="p-4 rounded-lg bg-white/5 border border-white/10 space-y-4"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-semibold text-yellow-400">
+                  <span className="text-lg font-semibold text-white">
                     {frame.label}
                   </span>
                 </div>
@@ -541,7 +542,7 @@ export default function GeneratorForm() {
                           e.target.value,
                         )
                       }
-                      className="w-full h-12 bg-[#1a1a1a] text-white rounded-md px-3 border border-white/20"
+                      className="w-full h-12 bg-[#2D130A] text-white rounded-md px-3 border border-white/50"
                     >
                       <option value="">-- Choose Building --</option>
                       {CAMPUS_BUILDINGS.map((b) => (

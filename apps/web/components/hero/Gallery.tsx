@@ -232,12 +232,16 @@ export default function GalleryCarousel() {
                       group-hover:shadow-2xl group-hover:shadow-black/40
                       transition-shadow duration-300"
                     >
-                      {/* 👇 BACKGROUND IMAGE LAYER */}
+                      {/* 👇 BACKGROUND IMAGE LAYER with Opacity */}
                       <img 
                         src="/images/dashboard.png" 
                         alt="Polaroid Background"
-                        className="absolute inset-0 w-full h-full object-cover bg-white"
+                        // Added opacity-50 here
+                        className="absolute inset-0 w-full h-full object-cover bg-white opacity-90"
                       />
+                      
+                      {/* 👇 BLACK OVERLAY LAYER */}
+                      <div className="absolute inset-0 bg-black opacity-40"></div>
 
                       {/* Content Layer (z-10 ensures it sits ON TOP of the background image) */}
                       <div className="relative z-10">
@@ -250,12 +254,12 @@ export default function GalleryCarousel() {
                           />
                         </div>
 
-                        {/* Caption */}
+                        {/* Caption - ensure text is white for contrast */}
                         <div className="mt-3 text-center">
                           <p className="font-medium text-white text-sm">
                             {title}
                           </p>
-                          <p className="text-xs text-white mt-1">
+                          <p className="text-xs text-white/80 mt-1">
                             {submitter} • {time}
                           </p>
                         </div>
