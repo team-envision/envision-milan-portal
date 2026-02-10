@@ -6,13 +6,18 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="w-full py-12 px-4 bg-[#050505]">
+    // Outer Background Gradient: Top (#2D130A) -> Bottom (#1B0B05)
+    <footer className="w-100% bg-gradient-to-b from-[#2D130A] to-[#1B0B05]">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="max-w-[1400px] mx-auto bg-[#0a0a0a] border border-white/10 rounded-[40px] p-8 md:p-12 overflow-hidden relative"
+        // Updated Card Styles:
+        // 1. bg-[#1B0B05] matches the dark theme (was #0a0a0a)
+        // 2. border-2 border-white/10 adds distinct outline
+        // 3. shadow-[...] adds the 3D elevated look
+        className="max-w-[1600px] mx-auto bg-[#1B0B05] border-2 border-white/10 rounded-[40px] p-8 md:p-12 overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
       >
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-8">
           

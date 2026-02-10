@@ -41,7 +41,7 @@ export default function Navbar() {
               alt="SRM Logo" 
               width={80} 
               height={80} 
-              className="object-contain" // Ensure logo fits well
+              className="object-contain" 
             />
           </div>
         </Link>
@@ -55,10 +55,11 @@ export default function Navbar() {
           bg-white/10 backdrop-blur-xl
           border border-white/20
           rounded-full
-          px-8 py-3 items-center
+          px-8 py-1 items-center 
           transition-all duration-300
           ${scrolled ? "shadow-lg shadow-black/30 bg-white/15" : ""}
         `}
+        // Changed py-3 to py-2 above ^
         style={{
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
           backdropFilter: "blur(20px)",
@@ -69,8 +70,8 @@ export default function Navbar() {
           <Link
             key={link.href}
             href={link.href}
-            className="text-sm font-medium text-white/80 
-              hover:text-white hover:bg-white/10 rounded-full px-4 py-1
+            className="text-sm font-medium text-white/90 
+              hover:text-white hover:bg-white/10 rounded-full px-4 py-2
               transition-all duration-200"
           >
             {link.label}
@@ -84,12 +85,17 @@ export default function Navbar() {
           <Link
             href="/generate"
             className="px-6 py-2.5 text-sm font-medium 
-              bg-[#1a1a1a] text-white rounded-full
+              bg-white/10 text-white rounded-full
               border border-white/20
-              hover:bg-[#252525] hover:border-white/30
+              hover:bg-white/15 hover:border-white/30
               active:scale-[0.98]
               transition-all duration-200
-              backdrop-blur-sm block"
+              backdrop-blur-xl block"
+            style={{
+              boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+            }}
           >
             Generate
           </Link>

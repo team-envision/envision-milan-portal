@@ -32,7 +32,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-12 bg-[#0a0a0a] relative overflow-hidden">
+    <section id="how-it-works" className="py-12 bg-[#2D130A] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -57,16 +57,16 @@ export default function HowItWorks() {
             >
               {/* Number Badge */}
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-30">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.4)] border-2 border-[#2D130A]">
                   <span className="text-black font-bold text-lg">{step.number}</span>
                 </div>
               </div>
 
               {/* Card Container */}
-              <div className="relative bg-[#0F0F0F] rounded-[32px] pt-16 pb-12 px-8 h-full border border-white/5 transition-all duration-300 hover:border-white/10 hover:bg-[#121212]">
+              {/* Added: border-2, border-white, shadow-xl for 3D look */}
+              <div className="relative bg-[#2D130A] rounded-[32px] pt-16 pb-12 px-8 h-full border-2 border- shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_25px_50px_rgba(0,0,0,0.6)]">
                 
                 {/* Connector Line - Only for 2nd, 3rd, 4th cards (index > 0) */}
-                {/* Starts from right edge of previous card (-24px gap) and ends at center of this card (50%) */}
                 {index > 0 && (
                   <div className="hidden lg:block absolute top-[6.5rem] right-1/2 left-[-24px] h-[1px] bg-white/30 shadow-[0_0_10px_rgba(255,255,255,0.2)] z-0" />
                 )}
