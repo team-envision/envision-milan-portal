@@ -6,25 +6,17 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    // Outer Background Gradient: Top (#2D130A) -> Bottom (#1B0B05)
-    <footer className="w-100% bg-gradient-to-b from-[#2D130A] to-[#1B0B05]">
+    <footer className="w-full flex flex-col justify-center bg-transparent relative z-10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        // Updated Card Styles:
-        // 1. bg-[#1B0B05] matches the dark theme (was #0a0a0a)
-        // 2. border-2 border-white/10 adds distinct outline
-        // 3. shadow-[...] adds the 3D elevated look
-        className="max-w-[1600px] mx-auto bg-[#1B0B05] border-2 border-white/10 rounded-[40px] p-8 md:p-12 overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+        className="border-t-2 rounded-[40px] p-8 md:p-12 flex flex-col justify-center overflow-hidden relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-[#1B0B05] border-white/10"
       >
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-8">
-          
-          {/* Column 1: DSA Logo & Socials (Span 3) */}
-          <div className="md:col-span-3 flex flex-col justify-between space-y-6">
-            {/* Wrapper div with fixed width to ensure logo and socials align perfectly */}
-            <div className="flex flex-col items-start w-[240px]"> 
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8">
+          <div className="md:col-span-3 flex flex-col items-center md:items-start justify-between space-y-6">
+            <div className="flex flex-col items-center md:items-start w-full max-w-60">
               <Image
                 src="/images/DSA_logo.png"
                 alt="Directorate of Student Affairs"
@@ -33,58 +25,110 @@ export default function Footer() {
                 className="object-contain w-full h-auto"
               />
 
-              {/* Social Icons - Justify Between to span full width of logo */}
-              <div className="flex items-center justify-between w-full mt-6">
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/facebook.png" alt="Facebook" width={20} height={20} />
+              <div className="flex items-center justify-between w-full mt-8 md:mt-6 px-4 md:px-0">
+                <a
+                  href="#"
+                  className="opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  <Image
+                    src="/images/facebook.png"
+                    alt="Facebook"
+                    width={24}
+                    height={24}
+                    className="md:w-5 md:h-5"
+                  />
                 </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/X.png" alt="X" width={20} height={20} />
+                <a
+                  href="#"
+                  className="opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  <Image
+                    src="/images/X.png"
+                    alt="X"
+                    width={24}
+                    height={24}
+                    className="md:w-5 md:h-5"
+                  />
                 </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/Linkedin.png" alt="LinkedIn" width={20} height={20} />
+                <a
+                  href="#"
+                  className="opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  <Image
+                    src="/images/Linkedin.png"
+                    alt="LinkedIn"
+                    width={24}
+                    height={24}
+                    className="md:w-5 md:h-5"
+                  />
                 </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/Instagram.png" alt="Instagram" width={20} height={20} />
+                <a
+                  href="#"
+                  className="opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  <Image
+                    src="/images/Instagram.png"
+                    alt="Instagram"
+                    width={24}
+                    height={24}
+                    className="md:w-5 md:h-5"
+                  />
                 </a>
               </div>
             </div>
           </div>
 
-          {/* Column 2: Quick Links (Span 3) */}
-          <div className="md:col-span-3 md:pl-8 pt-4">
-            <h4 className="text-white font-semibold mb-6">Quick Links</h4>
-            <ul className="space-y-4">
-              {['Home', 'Generate Image', 'How It Works', 'Gallery', 'Guidelines'].map(link => (
-                <li key={link}>
-                  <Link href="#" className="text-sm text-white/50 hover:text-white transition-colors block">
-                    {link}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <div className="col-span-1 md:col-span-5 flex flex-row justify-center md:justify-start gap-12 md:gap-0 w-full">
+            <div className="w-1/2 md:w-auto md:flex-1 md:pl-8 pt-4 text-center">
+              <h4 className="text-white font-semibold mb-6 text-lg md:text-base">
+                Quick Links
+              </h4>
+              <ul className="space-y-4">
+                {[
+                  "Home",
+                  "Generate Image",
+                  "How It Works",
+                  "Gallery",
+                  "Guidelines",
+                ].map((link) => (
+                  <li key={link}>
+                    <Link
+                      href="#"
+                      className="text-sm text-white/50 hover:text-white transition-colors block py-1 md:py-0"
+                    >
+                      {link}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="w-1/2 md:w-auto md:flex-1 pt-4 text-center">
+              <h4 className="text-white font-semibold mb-6 text-lg md:text-base">
+                Legal
+              </h4>
+              <ul className="space-y-4">
+                {[
+                  "Privacy Policy",
+                  "Terms & Conditions",
+                  "Support",
+                  "Contact Us",
+                ].map((link) => (
+                  <li key={link}>
+                    <Link
+                      href="#"
+                      className="text-sm text-white/50 hover:text-white transition-colors block py-1 md:py-0"
+                    >
+                      {link}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Column 3: Legal (Span 2) */}
-          <div className="md:col-span-2 pt-4">
-            <h4 className="text-white font-semibold mb-6">Legal</h4>
-            <ul className="space-y-4">
-              {['Privacy Policy', 'Terms & Conditions', 'Support', 'Contact Us'].map(link => (
-                <li key={link}>
-                  <Link href="#" className="text-sm text-white/50 hover:text-white transition-colors block">
-                    {link}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 4: Aaruush & Team Envision (Span 4) */}
-          <div className="md:col-span-4 flex flex-col items-end justify-between space-y-8 pt-2">
-            
-            {/* Aaruush Section */}
-            {/* Fixed width [320px] to make it largest and alignment strict */}
-            <div className="flex flex-col items-end w-[320px]">
+          <div className="md:col-span-4 flex flex-col items-center md:items-end justify-between space-y-12 md:space-y-8 pt-8 md:pt-2">
+            <div className="flex flex-col items-center md:items-end w-full max-w-[320px]">
               <Image
                 src="/images/Aaruush_logo.png"
                 alt="Aaruush '25"
@@ -92,36 +136,38 @@ export default function Footer() {
                 height={80}
                 className="object-contain w-full h-auto"
               />
-
-              {/* Aaruush Social Icons - Spanning full width */}
-              <div className="flex items-center justify-between w-full mt-4">
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/aarush_website.png" alt="Aaruush Website" width={35} height={35} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/facebook.png" alt="Facebook" width={18} height={18} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/X.png" alt="X" width={18} height={18} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/Linkedin.png" alt="LinkedIn" width={18} height={18} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/Instagram.png" alt="Instagram" width={18} height={18} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/Android.png" alt="Android" width={18} height={18} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/ios.png" alt="iOS" width={18} height={18} />
-                </a>
+              <div className="flex items-center justify-between w-full mt-6 px-2 md:px-0">
+                {[
+                  {
+                    src: "/images/aarush_website.png",
+                    alt: "Website",
+                    w: 35,
+                  },
+                  { src: "/images/facebook.png", alt: "Facebook", w: 18 },
+                  { src: "/images/X.png", alt: "X", w: 18 },
+                  { src: "/images/Linkedin.png", alt: "LinkedIn", w: 18 },
+                  { src: "/images/Instagram.png", alt: "Instagram", w: 18 },
+                  { src: "/images/Android.png", alt: "Android", w: 18 },
+                  { src: "/images/ios.png", alt: "iOS", w: 18 },
+                ].map((icon, idx) => (
+                  <a
+                    key={idx}
+                    href="#"
+                    className="opacity-60 hover:opacity-100 transition-opacity"
+                  >
+                    <Image
+                      src={icon.src}
+                      alt={icon.alt}
+                      width={icon.w}
+                      height={icon.w}
+                      className="object-contain"
+                    />
+                  </a>
+                ))}
               </div>
             </div>
 
-            {/* Team Envision Section */}
-            {/* Fixed width [260px] - Wider than previous but narrower than Aaruush */}
-            <div className="flex flex-col items-end w-[260px]">
+            <div className="flex flex-col items-center md:items-end w-full max-w-65">
               <Image
                 src="/images/Envision_logo.png"
                 alt="Team Envision"
@@ -129,27 +175,30 @@ export default function Footer() {
                 height={90}
                 className="object-contain w-full h-auto"
               />
-
-              {/* Envision Social Icons - Spanning full width */}
-              <div className="flex items-center justify-between w-full mt-4">
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/Envision_website.png" alt="Envision Website" width={18} height={18} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/facebook.png" alt="Facebook" width={18} height={18} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/X.png" alt="X" width={18} height={18} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/Linkedin.png" alt="LinkedIn" width={18} height={18} />
-                </a>
-                <a href="#" className="opacity-60 hover:opacity-100 transition-opacity">
-                  <Image src="/images/Instagram.png" alt="Instagram" width={18} height={18} />
-                </a>
+              <div className="flex items-center justify-between w-full mt-6 px-2 md:px-0">
+                {[
+                  { src: "/images/Envision_website.png", alt: "Website" },
+                  { src: "/images/facebook.png", alt: "Facebook" },
+                  { src: "/images/X.png", alt: "X" },
+                  { src: "/images/Linkedin.png", alt: "LinkedIn" },
+                  { src: "/images/Instagram.png", alt: "Instagram" },
+                ].map((icon, idx) => (
+                  <a
+                    key={idx}
+                    href="#"
+                    className="opacity-60 hover:opacity-100 transition-opacity"
+                  >
+                    <Image
+                      src={icon.src}
+                      alt={icon.alt}
+                      width={18}
+                      height={18}
+                      className="object-contain"
+                    />
+                  </a>
+                ))}
               </div>
             </div>
-
           </div>
         </div>
       </motion.div>

@@ -1,12 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
 
-// 👇 PASTE YOUR BACKGROUND IMAGE PATH HERE (e.g., "/images/paper-texture.png")
-const POLAROID_FRAME_SRC = "/path/to/your/polaroid-bg.png";
-
-// Keep your samples array exactly as it was
 const samples = [
   {
     id: 1,
@@ -105,7 +102,6 @@ export default function GalleryCarousel() {
 
         const items = Array.isArray(data.items) ? data.items : [];
 
-        // Sort newest first by createdAt
         items.sort((a: any, b: any) => {
           const ta = new Date(a.createdAt).getTime();
           const tb = new Date(b.createdAt).getTime();
@@ -144,9 +140,11 @@ export default function GalleryCarousel() {
   };
 
   return (
-    <section id="gallery" className="py-12 bg-[#2D130A] min-h-[600px]">
-      <div className="max-w-6xl mx-auto px-6">
-        {/* Section Header */}
+    <section
+      id="gallery"
+      className="bg-transparent min-h-screen relative overflow-hidden"
+    >
+      <div className="max-w-6xl mx-auto px-10 md:px-0 flex flex-col items-center justify-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -157,7 +155,7 @@ export default function GalleryCarousel() {
           <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight">
             Sample Generations
           </h2>
-          <p className="mt-4 text-white/50 max-w-xl mx-auto">
+          <p className="mt-4 text-white/50 max-w-xl text-lg tracking-wide">
             Get inspired by memories created by fellow SRMites celebrating 40
             years of legacy
           </p>
@@ -216,37 +214,31 @@ export default function GalleryCarousel() {
                     className="group relative cursor-pointer"
                     style={{ transformOrigin: "center bottom" }}
                   >
-                    {/* Tape decoration */}
                     <div
-                      className="absolute -top-2 left-1/2 -translate-x-1/2 w-10 h-4 z-10
-                        bg-gradient-to-b from-amber-100/90 to-amber-200/80
-                        shadow-sm"
+                      className="absolute -top-5 left-1/2 -translate-x-1/2 w-24 h-10 z-10
+                        bg-linear-to-b from-amber-100/90 to-amber-200/80
+                        backdrop-blur-xl
+                        shadow-sm opacity-20"
                       style={{
-                        transform: `translateX(-50%) rotate(${rotation > 0 ? 3 : -3}deg)`,
+                        boxShadow: "inset 0.5px 1px 3px 0px #ada5a5ab",
                       }}
                     />
 
-                    {/* Polaroid Card Container */}
                     <div
-                      className="relative p-3 pb-6 shadow-xl overflow-hidden
+                      className="relative p-4 pb-6 shadow-xl overflow-hidden
                       group-hover:shadow-2xl group-hover:shadow-black/40
-                      transition-shadow duration-300"
+                      transition-shadow duration-300 rounded-xl"
                     >
-                      {/* 👇 BACKGROUND IMAGE LAYER with Opacity */}
-                      <img 
-                        src="/images/dashboard.png" 
+                      <img
+                        src="/images/dashboard.png"
                         alt="Polaroid Background"
-                        // Added opacity-50 here
-                        className="absolute inset-0 w-full h-full object-cover bg-white opacity-90"
+                        className="absolute inset-0 w-full h-full object-cover bg-white opacity-90 rounded-xl"
                       />
-                      
-                      {/* 👇 BLACK OVERLAY LAYER */}
+
                       <div className="absolute inset-0 bg-black opacity-40"></div>
 
-                      {/* Content Layer (z-10 ensures it sits ON TOP of the background image) */}
-                      <div className="relative z-10">
-                        {/* Image container */}
-                        <div className="aspect-square bg-gray-100 overflow-hidden">
+                      <div className="relative z-10 ">
+                        <div className="aspect-square rounded-xl bg-gray-100 overflow-hidden">
                           <img
                             src={imageSrc}
                             alt={title}
@@ -254,9 +246,8 @@ export default function GalleryCarousel() {
                           />
                         </div>
 
-                        {/* Caption - ensure text is white for contrast */}
                         <div className="mt-3 text-center">
-                          <p className="font-medium text-white text-sm">
+                          <p className="font-normal text-white text-md">
                             {title}
                           </p>
                           <p className="text-xs text-white/80 mt-1">
@@ -270,7 +261,6 @@ export default function GalleryCarousel() {
               })}
             </motion.div>
 
-            {/* Pagination Controls */}
             {totalPages > 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

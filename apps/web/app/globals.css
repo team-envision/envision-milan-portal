@@ -54,41 +54,41 @@
 
 :root {
   --radius: 0.625rem;
-  
+
   /* Background Layers */
   --bg-deep: #0a0a0a;
   --bg-elevated: #111111;
   --bg-glass: rgba(17, 17, 17, 0.8);
   --bg-glass-hover: rgba(255, 255, 255, 0.05);
-  
+
   /* Text Hierarchy */
   --text-primary: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
   --text-muted: rgba(255, 255, 255, 0.4);
   --text-subtle: rgba(255, 255, 255, 0.2);
-  
+
   /* Borders */
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-medium: rgba(255, 255, 255, 0.15);
   --border-strong: rgba(255, 255, 255, 0.25);
-  
+
   /* Accents */
   --accent-success: #22c55e;
   --accent-success-muted: rgba(34, 197, 94, 0.2);
   --accent-danger: #ef4444;
   --accent-danger-muted: rgba(239, 68, 68, 0.2);
   --accent-glow: rgba(255, 255, 255, 0.1);
-  
+
   /* Polaroid */
   --polaroid-bg: #ffffff;
   --polaroid-text: #1a1a1a;
   --polaroid-tape: rgba(255, 220, 150, 0.8);
-  
+
   /* Shadows */
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
   --shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.6);
   --shadow-glow: 0 0 40px rgba(255, 255, 255, 0.05);
-  
+
   /* Base Theme Variables (Dark by Default) */
   --background: #0a0a0a;
   --foreground: #ffffff;
@@ -131,14 +131,14 @@
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply bg-background text-foreground antialiased;
-    background-color: var(--bg-deep);
+    background: radial-gradient(circle, #240e07 75%, #000000 100%);
     color: var(--text-primary);
   }
 }
@@ -166,11 +166,16 @@
 }
 
 .vignette::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
 }
 
 /* Spotlight Effect */
@@ -179,7 +184,7 @@
 }
 
 .spotlight::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 50%;
@@ -187,7 +192,11 @@
   width: 100%;
   height: 60%;
   pointer-events: none;
-  background: radial-gradient(ellipse at center top, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+  background: radial-gradient(
+    ellipse at center top,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 70%
+  );
 }
 
 /* ============================================
@@ -318,7 +327,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

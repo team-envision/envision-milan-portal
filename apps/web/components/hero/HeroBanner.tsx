@@ -5,90 +5,69 @@ import Image from "next/image";
 
 export default function HeroBanner() {
   return (
-    <section className="relative min-h-screen overflow-hidden pt-20">
-      
-      {/* --- BACKGROUND IMAGE --- */}
-      <div className="absolute inset-0 z-0">
-        <Image 
-          src="/images/dashboard.png" 
+    <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 z-0 h-screen w-full">
+        <Image
+          src="/images/dashboard.png"
           alt="Background Texture"
           fill
           priority
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-black/60" /> 
+        <div className="absolute inset-0 bg-black/60 h-screen w-full" />
       </div>
 
-      {/* Content Wrapper */}
-      <div className="relative z-10 flex flex-col items-center w-full">
-        
-        {/* Camera Lens Visual */}
+      <div className="relative z-10 flex flex-col justify-start items-center w-full min-h-screen">
         <motion.div
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full flex justify-center -mt-18"
+          className="relative w-100 h-45 md:w-110 md:h-50 mt-10"
         >
-          {/* CHANGE 1: Increased size of the camera container 
-              Old: w-[480px] h-[300px]
-              New: w-[600px] h-[380px] (and added responsive sizing)
-          */}
-          <div className="relative w-[350px] h-[220px] md:w-[600px] md:h-[380px]">
-            <Image 
-              src="/images/Camera-Lens.png"
-              alt="Camera Lens"
-              fill
-              className="object-contain object-top drop-shadow-2xl"
-              priority
-            />
-          </div>
+          <Image
+            src="/images/lens.png"
+            alt="Camera Lens"
+            fill
+            className="object-cover object-top drop-shadow-2xl"
+            priority
+          />
         </motion.div>
 
-        {/* Badge (Button) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          // CHANGE 2: Adjusted margin to account for bigger camera (-mt-30 -> -mt-36)
-          className="-mt-24 md:-mt-36 z-20" 
+          className="z-20 px-10 py-3 rounded-full backdrop-blur-xl bg-transparent tracking-wide text-white/90 text-[0.8rem] font-medium -mt-4"
+          style={{
+            boxShadow: "inset 0.5px 1px 3px 0px #ada5a5ab",
+          }}
         >
-          <div className="px-6 py- rounded-full border-2 border-white/20 bg-black/20 backdrop-blur-sm">
-            <span className="text-xs font-medium text-white/90 tracking-wide">
-              Celebrating 40 Years of Excellence
-            </span>
-          </div>
+          Celebrating 40 Years of Excellence
         </motion.div>
 
-        {/* New Central Image (Milan Logo) */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative -mt-16 z-10"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative flex justify-items-start items-start w-200 h-130 md:w-240 md:h-120"
         >
-          <div className="relative w-[360px] h-[240px] md:w-[850px] md:h-[500px]">
-            <Image
-              src="/images/milan-logo.png"
-              alt="Hero Display"
-              fill
-              className="object-contain"
-            />
-          </div>
+          <Image
+            src="/images/milan-logo.png"
+            alt="Milan Logo"
+            className="object-contain"
+            fill
+            priority
+          />
         </motion.div>
-
-        {/* Supporting Text */}
-        <motion.div
+        <motion.p
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="-mt-12 max-w-md mx-auto text-center px-4 relative z-10"
+          className="text-md md:text-sm text-white/40 leading-relaxed not-italic font-normal transform-none max-w-sm md:max-w-lg text-center pb-0 md:pb-10"
         >
-          <p className="text-sm text-white/40 leading-relaxed not-italic transform-none">
-            Transform your favorite campus moments into polaroid memories. Celebrate
-            four decades of SRM legacy with every snapshot.
-          </p>
-        </motion.div>
-      
+          Transform your favorite campus moments into polaroid memories.
+          Celebrate four decades of SRM legacy with every snapshot.
+        </motion.p>
       </div>
     </section>
   );

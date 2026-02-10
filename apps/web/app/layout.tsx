@@ -16,11 +16,20 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SRM University - 40 Years Celebration | AI Memory Portal",
-  description: "Create AI-powered commemorative posters from your campus memories. Celebrating 40 years of SRM University excellence.",
-  keywords: ["SRM University", "40 Years", "AI", "Memory", "Poster", "Celebration"],
+  description:
+    "Create AI-powered commemorative posters from your campus memories. Celebrating 40 years of SRM University excellence.",
+  keywords: [
+    "SRM University",
+    "40 Years",
+    "AI",
+    "Memory",
+    "Poster",
+    "Celebration",
+  ],
   openGraph: {
     title: "SRM University - 40 Years Celebration",
-    description: "Transform your campus memories into AI-generated commemorative posters",
+    description:
+      "Transform your campus memories into AI-generated commemorative posters",
     type: "website",
   },
 };
@@ -33,11 +42,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0a] text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased  text-white`}
       >
-        {/* Grain Overlay for cinematic effect */}
-        <div className="grain-overlay" aria-hidden="true" />
-        
         <Navbar />
         <main>{children}</main>
         <Footer />

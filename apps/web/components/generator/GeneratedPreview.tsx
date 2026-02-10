@@ -9,7 +9,9 @@ export default function GeneratedPreview() {
   return (
     // Updated bg-transparent to bg-[#2D130A]
     <div className="bg-[#2D130A] p-8 rounded-xl border border-white/50 flex flex-col items-center h-full">
-      <h2 className="text-3xl font-semibold mb-8 text-center text-white">Generated Poster</h2>
+      <h2 className="text-3xl font-semibold mb-8 text-center text-white">
+        Generated Poster
+      </h2>
 
       <div className="relative w-full h-full min-h-[600px] border border-white/50 rounded-xl overflow-hidden  flex items-center justify-center">
         {state.isLoading && (
@@ -25,11 +27,10 @@ export default function GeneratedPreview() {
             alt="Generated Poster"
           />
         )}
-        
-        {!state.generatedImage && !state.isLoading && (
-             <div className="text-white/20">Preview will appear here</div>
-        )}
 
+        {!state.generatedImage && !state.isLoading && (
+          <div className="text-white/20">Preview will appear here</div>
+        )}
       </div>
       {state.compressedText && (
         <p className="mt-4 text-sm text-gray-400 italic text-center max-w-md">
@@ -37,7 +38,7 @@ export default function GeneratedPreview() {
         </p>
       )}
 
-      <div className="mt-6 w-full flex justify-center"> 
+      <div className="mt-6 w-full flex justify-center">
         {state.generatedImage && <ShareActions />}
       </div>
     </div>
