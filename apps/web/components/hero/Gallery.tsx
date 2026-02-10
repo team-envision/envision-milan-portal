@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
 
+// 👇 PASTE YOUR BACKGROUND IMAGE PATH HERE (e.g., "/images/paper-texture.png")
+const POLAROID_FRAME_SRC = "/path/to/your/polaroid-bg.png";
+
 // Keep your samples array exactly as it was
 const samples = [
   {
@@ -82,7 +85,6 @@ const ITEMS_PER_PAGE = 6;
 
 export default function GalleryCarousel() {
   const [posters, setPosters] = useState<any[]>([]);
-  // 1. Add loading state initialized to TRUE
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -112,11 +114,8 @@ export default function GalleryCarousel() {
 
         setPosters(items);
       } catch (err) {
-        // If error occurs, we just log it.
-        // posters remains [], so 'displayPosters' will naturally fall back to 'samples'
         console.error("Failed to fetch posters", err);
       } finally {
-        // 2. STOP loading regardless of success or failure
         if (mounted) setIsLoading(false);
       }
     })();
@@ -126,8 +125,6 @@ export default function GalleryCarousel() {
     };
   }, []);
 
-  // 3. Logic: If loading, don't calculate anything yet.
-  //    If loaded, check if we have posters; if not, use samples.
   const displayPosters = posters.length > 0 ? posters : samples;
 
   const totalPages = Math.max(
@@ -147,7 +144,7 @@ export default function GalleryCarousel() {
   };
 
   return (
-    <section id="gallery" className="py-12 bg-[#0a0a0a] min-h-[600px]">
+    <section id="gallery" className="py-12 bg-[#2D130A] min-h-[600px]">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
@@ -166,13 +163,11 @@ export default function GalleryCarousel() {
           </p>
         </motion.div>
 
-        {/* 4. Loading Indicator: Show this while fetching */}
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-200"></div>
           </div>
         ) : (
-          /* 5. Actual Grid: Only shown when data is ready */
           <>
             <motion.div
               key={`gallery-page-${currentPage}`}
@@ -182,7 +177,6 @@ export default function GalleryCarousel() {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
             >
               {currentPosters.map((sample: any, idx: number) => {
-                // Determine image and metadata
                 const isPoster = !!posters.length;
                 const imageSrc = isPoster ? sample.imageUrl : sample.image;
                 const title = isPoster
@@ -232,29 +226,39 @@ export default function GalleryCarousel() {
                       }}
                     />
 
-                    {/* Polaroid card */}
+                    {/* Polaroid Card Container */}
                     <div
-                      className="bg-white p-3 pb-6 shadow-xl 
+                      className="relative p-3 pb-6 shadow-xl overflow-hidden
                       group-hover:shadow-2xl group-hover:shadow-black/40
                       transition-shadow duration-300"
                     >
-                      {/* Image container */}
-                      <div className="aspect-square bg-gray-100 overflow-hidden">
-                        <img
-                          src={imageSrc}
-                          alt={title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                      </div>
+                      {/* 👇 BACKGROUND IMAGE LAYER */}
+                      <img 
+                        src="/images/dashboard.png" 
+                        alt="Polaroid Background"
+                        className="absolute inset-0 w-full h-full object-cover bg-white"
+                      />
 
-                      {/* Caption */}
-                      <div className="mt-3 text-center">
-                        <p className="font-medium text-gray-800 text-sm">
-                          {title}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {submitter} • {time}
-                        </p>
+                      {/* Content Layer (z-10 ensures it sits ON TOP of the background image) */}
+                      <div className="relative z-10">
+                        {/* Image container */}
+                        <div className="aspect-square bg-gray-100 overflow-hidden">
+                          <img
+                            src={imageSrc}
+                            alt={title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          />
+                        </div>
+
+                        {/* Caption */}
+                        <div className="mt-3 text-center">
+                          <p className="font-medium text-white text-sm">
+                            {title}
+                          </p>
+                          <p className="text-xs text-white mt-1">
+                            {submitter} • {time}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </motion.div>

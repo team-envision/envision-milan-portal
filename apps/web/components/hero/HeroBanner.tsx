@@ -5,92 +5,91 @@ import Image from "next/image";
 
 export default function HeroBanner() {
   return (
-    <section className="relative min-h-screen bg-[#0a0a0a] overflow-hidden flex flex-col items-center pt-20">
-      {/* Camera Lens Visual - Cropped from top, decorative */}
-      <motion.div
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full flex justify-center -mt-8"
-      >
-        {/* Actual Image Asset */}
-        <div className="relative w-[480px] h-[300px]">
-          <Image 
-            src="/images/camera-lens.png"
-            alt="Camera Lens"
-            fill
-            className="object-contain object-top drop-shadow-2xl"
-            priority
-          />
-        </div>
-      </motion.div>
+    <section className="relative min-h-screen overflow-hidden pt-20">
+      
+      {/* --- BACKGROUND IMAGE --- */}
+      <div className="absolute inset-0 z-0">
+        <Image 
+          src="/images/dashboard.png" 
+          alt="Background Texture"
+          fill
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/60" /> 
+      </div>
 
-      {/* "Celebrating 40 Years of Excellence" Badge */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="-mt-24 z-10" // Pull closer to lens
-      >
-        <div className="px-8 py-3 rounded-full border-2 border-white/20 bg-black/40 backdrop-blur-sm">
-          <span className="text-xs font-medium text-white/70 tracking-wide">
-            Celebrating 40 Years of Excellence
-          </span>
-        </div>
-      </motion.div>
-
-      {/* Polaroid Card */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8, rotate: -720, x: "-100vw" }}
-        animate={{ opacity: 1, scale: 1, rotate: 0, x: 0 }}
-        transition={{ 
-          duration: 2.5, 
-          delay: 0.5, 
-          ease: [0.22, 1, 0.36, 1],
-          opacity: { duration: 0.5 },
-          scale: { duration: 2.2, ease: [0.22, 1, 0.36, 1] },
-          rotate: { duration: 2.5, ease: "easeOut" },
-          x: { duration: 2.2, ease: [0.22, 1, 0.36, 1] }
-        }}
-        className="relative mt-6"
-      >
-        {/* Polaroid frame - NO tape decoration */}
-        <div className="bg-[#f5f5f0] p-4 pb-6 shadow-2xl shadow-black/50" style={{ width: "280px" }}>
-          {/* Image area */}
-          <div 
-            className="aspect-[4/3] bg-gray-200 overflow-hidden relative"
-          >
-            {/* Real Polaroid Image */}
-            <Image
-              src="/images/polaroid-sample.jpg"
-              alt="Polaroid Memory"
+      {/* Content Wrapper */}
+      <div className="relative z-10 flex flex-col items-center w-full">
+        
+        {/* Camera Lens Visual */}
+        <motion.div
+          initial={{ opacity: 0, y: -40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full flex justify-center -mt-18"
+        >
+          {/* CHANGE 1: Increased size of the camera container 
+              Old: w-[480px] h-[300px]
+              New: w-[600px] h-[380px] (and added responsive sizing)
+          */}
+          <div className="relative w-[350px] h-[220px] md:w-[600px] md:h-[380px]">
+            <Image 
+              src="/images/Camera-Lens.png"
+              alt="Camera Lens"
               fill
-              className="object-cover"
+              className="object-contain object-top drop-shadow-2xl"
+              priority
             />
           </div>
-          
-          {/* Caption area */}
-          <div className="mt-3 text-center">
-            <p className="text-[#333] text-sm font-medium leading-snug">
-              Capture your SRM moments in<br />
-              <span className="text-[#333]">a Polaroid</span>
-            </p>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      {/* Supporting Text - Subtle, muted */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="mt-6 max-w-md mx-auto text-center px-6"
-      >
-        <p className="text-sm text-white/40 leading-relaxed not-italic transform-none">
-          Transform your favorite campus moments into polaroid memories. Celebrate
-          four decades of SRM legacy with every snapshot.
-        </p>
-      </motion.div>
+        {/* Badge (Button) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          // CHANGE 2: Adjusted margin to account for bigger camera (-mt-30 -> -mt-36)
+          className="-mt-24 md:-mt-36 z-20" 
+        >
+          <div className="px-6 py- rounded-full border-2 border-white/20 bg-black/20 backdrop-blur-sm">
+            <span className="text-xs font-medium text-white/90 tracking-wide">
+              Celebrating 40 Years of Excellence
+            </span>
+          </div>
+        </motion.div>
+
+        {/* New Central Image (Milan Logo) */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative -mt-16 z-10"
+        >
+          <div className="relative w-[360px] h-[240px] md:w-[850px] md:h-[500px]">
+            <Image
+              src="/images/milan-logo.png"
+              alt="Hero Display"
+              fill
+              className="object-contain"
+            />
+          </div>
+        </motion.div>
+
+        {/* Supporting Text */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="-mt-12 max-w-md mx-auto text-center px-4 relative z-10"
+        >
+          <p className="text-sm text-white/40 leading-relaxed not-italic transform-none">
+            Transform your favorite campus moments into polaroid memories. Celebrate
+            four decades of SRM legacy with every snapshot.
+          </p>
+        </motion.div>
+      
+      </div>
     </section>
   );
 }

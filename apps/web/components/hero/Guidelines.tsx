@@ -38,7 +38,7 @@ const itemVariants: Variants = {
 
 export default function Guidelines() {
   return (
-    <section id="guidelines" className="py-12 bg-[#0a0a0a]">
+    <section id="guidelines" className="py-12 bg-[#2D130A]">
       <div className="max-w-5xl mx-auto px-6">
         {/* Section Header */}
         <motion.div
@@ -63,7 +63,8 @@ export default function Guidelines() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-[#111] border border-white/[0.08] rounded-2xl p-8"
+            // Added shadow-xl, border-2, and hover lift for 3D effect
+            className="bg-[#2D130A] border-2 border-white/10 rounded-2xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:-translate-y-2 transition-transform duration-300"
           >
             <h3 className="text-lg font-semibold text-white mb-6">
               Allowed Usage
@@ -82,9 +83,10 @@ export default function Guidelines() {
                   variants={itemVariants}
                   className="flex items-start gap-3"
                 >
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500/20 
+                  {/* Updated to Brown Colors */}
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#4A2518] border border-[#5D2E22]
                     flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-3.5 h-3.5 text-[#D2691E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
@@ -100,7 +102,8 @@ export default function Guidelines() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-[#111] border border-white/[0.08] rounded-2xl p-8"
+            // Added shadow-xl, border-2, and hover lift for 3D effect
+            className="bg-[#2D130A] border-2 border-white/10 rounded-2xl p-8 shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:-translate-y-2 transition-transform duration-300"
           >
             <h3 className="text-lg font-semibold text-white mb-6">
               Prohibited Content
@@ -119,9 +122,11 @@ export default function Guidelines() {
                   variants={itemVariants}
                   className="flex items-start gap-3"
                 >
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-red-500/20 
+                  {/* Updated to Brown Colors (Same as allowed, or slightly darker if you prefer distinct) */}
+                  {/* Using 'X' icon with brown styling */}
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#4A2518] border border-[#5D2E22]
                     flex items-center justify-center mt-0.5">
-                    <svg className="w-3 h-3 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-3.5 h-3.5 text-[#D2691E]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </div>

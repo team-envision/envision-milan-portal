@@ -6,7 +6,8 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="w-full py-12 px-4 bg-[#050505]">
+    // Updated background to gradient: Top (#2D130A) -> Bottom (#1B0B05)
+    <footer className="w-full py-12 px-4 bg-gradient-to-b from-[#2D130A] to-[#1B0B05]">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
