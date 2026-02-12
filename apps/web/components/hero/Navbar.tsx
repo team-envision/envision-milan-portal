@@ -134,25 +134,35 @@ export default function Navbar() {
           />
         </Link>
 
-        <button
-          onClick={() => setIsMobileMenuOpen(true)}
-          className="p-3 text-white bg-white/5 rounded-full backdrop-blur-md border border-white/10 active:scale-95 transition-transform"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6"
+        <div className="flex gap-5 ">
+          {pathname !== "/generate" && (
+            <Link
+              href="/generate"
+              className="flex gap-5 p-3 text-white bg-white/5 rounded-full backdrop-blur-md border border-white/10 active:scale-95 transition-transform"
+            >
+              Generate
+            </Link>
+          )}
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-3 text-white bg-white/5 rounded-full backdrop-blur-md border border-white/10 active:scale-95 transition-transform"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-            />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <AnimatePresence mode="wait">
