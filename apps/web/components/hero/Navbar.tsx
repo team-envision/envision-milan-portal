@@ -226,22 +226,19 @@ export default function Navbar() {
                 variants={itemVariants}
                 className="p-8 border-t border-white/5 bg-black/20"
               >
-                {pathname !== "/generate" && (
-                  <Link
-                    href="/generate"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full block py-4 text-center text-sm font-bold text-white uppercase tracking-wider rounded-2xl active:scale-[0.98] transition-transform shadow-lg relative overflow-hidden group"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #8B4513 0%, #5D2E22 100%)",
-                      boxShadow: "0 4px 15px rgba(139, 69, 19, 0.4)",
-                    }}
-                  >
-                    <span className="relative z-10">Generate Memory</span>
-                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                  </Link>
-                )}
-
+                <Link
+                  href="/generate"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full block py-4 text-center text-sm font-bold text-white uppercase tracking-wider rounded-2xl active:scale-[0.98] transition-transform shadow-lg relative overflow-hidden group"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #8B4513 0%, #5D2E22 100%)",
+                    boxShadow: "0 4px 15px rgba(139, 69, 19, 0.4)",
+                  }}
+                >
+                  <span className="relative z-10">Generate Memory</span>
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                </Link>
                 <p className="text-center text-white/20 text-xs mt-6">
                   © 2026 SRM University
                 </p>
