@@ -3,57 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
-
-const samples = [
-  {
-    id: 1,
-    title: "Main Gate Memories",
-    submitter: "SRM University",
-    time: "12 days",
-    rotation: -3,
-    image: "/samples/sample1.png",
-  },
-  {
-    id: 2,
-    title: "Campus Friendship",
-    submitter: "SRM University",
-    time: "12 days",
-    rotation: 2,
-    image: "/samples/sample2.png",
-  },
-  {
-    id: 3,
-    title: "Library Nights",
-    submitter: "SRM University",
-    time: "12 days",
-    rotation: -1,
-    image: "/samples/sample3.png",
-  },
-  {
-    id: 4,
-    title: "Auditorium Events",
-    submitter: "SRM University",
-    time: "8 days",
-    rotation: 3,
-    image: "/samples/sample4.png",
-  },
-  {
-    id: 5,
-    title: "Engineering Block",
-    submitter: "SRM University",
-    time: "6 days",
-    rotation: -2,
-    image: "/samples/sample5.png",
-  },
-  {
-    id: 6,
-    title: "Graduation Day",
-    submitter: "SRM University",
-    time: "4 days",
-    rotation: 1,
-    image: "/samples/sample6.png",
-  },
-];
+import Link from "next/link";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -121,15 +71,10 @@ export default function GalleryCarousel() {
     };
   }, []);
 
-  const displayPosters = posters.length > 0 ? posters : samples;
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(displayPosters.length / ITEMS_PER_PAGE),
-  );
+  const totalPages = Math.max(1, Math.ceil(posters.length / ITEMS_PER_PAGE));
   const startIdx = currentPage * ITEMS_PER_PAGE;
   const endIdx = startIdx + ITEMS_PER_PAGE;
-  const currentPosters = displayPosters.slice(startIdx, endIdx);
+  const currentPosters = posters.slice(startIdx, endIdx);
 
   const handlePrevious = () => {
     setCurrentPage((prev) => Math.max(0, prev - 1));
@@ -165,6 +110,25 @@ export default function GalleryCarousel() {
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-200"></div>
           </div>
+        ) : posters.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-20 text-center"
+          >
+            <p className="text-white/60 text-xl mb-8">
+              No posters generated yet.
+            </p>
+            <Link
+              href="/generate"
+              className="px-6 py-3 text-sm font-medium bg-transparent text-white rounded-full active:scale-[0.98] transition-all duration-200 backdrop-blur-xl block"
+              style={{
+                boxShadow: "inset 0.5px 1px 3px 0px #ada5a5ab",
+              }}
+            >
+              Generate Your Memory
+            </Link>
+          </motion.div>
         ) : (
           <>
             <motion.div
@@ -175,34 +139,27 @@ export default function GalleryCarousel() {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
             >
               {currentPosters.map((sample: any, idx: number) => {
-                const isPoster = !!posters.length;
-                const imageSrc = isPoster ? sample.imageUrl : sample.image;
-                const title = isPoster
-                  ? sample.theme || "SRM Memory"
-                  : sample.title;
-                const submitter = isPoster
-                  ? "SRM University"
-                  : sample.submitter;
-                const time = isPoster
-                  ? (() => {
-                      try {
-                        const days = Math.floor(
-                          (Date.now() - new Date(sample.createdAt).getTime()) /
-                            (1000 * 60 * 60 * 24),
-                        );
-                        return days <= 0 ? "today" : `${days} days`;
-                      } catch (e) {
-                        return "recent";
-                      }
-                    })()
-                  : sample.time;
+                const imageSrc = sample.imageUrl;
+                const title = sample.theme || "SRM Memory";
+                const submitter = "SRM University";
+                const time = (() => {
+                  try {
+                    const days = Math.floor(
+                      (Date.now() - new Date(sample.createdAt).getTime()) /
+                        (1000 * 60 * 60 * 24),
+                    );
+                    return days <= 0 ? "today" : `${days} days`;
+                  } catch (e) {
+                    return "recent";
+                  }
+                })();
 
                 const rotations = [-3, 2, -1, 3, -2, 1];
                 const rotation = rotations[idx % rotations.length];
 
                 return (
                   <motion.div
-                    key={`${currentPage}-${isPoster ? sample.id : sample.id}-${idx}`}
+                    key={`${currentPage}-${sample.id}-${idx}`}
                     custom={rotation}
                     variants={cardVariants}
                     whileHover={{
