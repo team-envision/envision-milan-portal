@@ -41,7 +41,7 @@ const setCookie = (name: string, value: string, days: number = 365): void => {
 };
 
 const POSTER_COUNT_COOKIE = "poster_generation_count";
-const MAX_POSTER_LIMIT = 5;
+const MAX_POSTER_LIMIT = 2;
 
 const incrementPosterCount = (): void => {
   const currentCount = parseInt(getCookie(POSTER_COUNT_COOKIE) || "0", 10);
