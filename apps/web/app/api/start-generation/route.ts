@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   // 1. CHECK VARIABLES
   const bucket = process.env.S3_BUCKET_NAME;
   const table = process.env.TABLE_NAME;
-  const region = process.env.AWS_REGION;
+  const region = process.env.REGION || "ap-south-1";
 
   console.log("Config Check:", {
     hasBucket: !!bucket,
