@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     }
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash-image",
+      model: "gemini-3-pro-image-preview",
     });
 
     const imageParts = images.map((imgData: string) => ({
