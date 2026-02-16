@@ -3,7 +3,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
 const dynamo = DynamoDBDocumentClient.from(
-  new DynamoDBClient({ region: process.env.REGION }),
+  new DynamoDBClient({ region: process.env.REGION || "ap-south-1" }),
 );
 
 export async function GET(req: Request) {
