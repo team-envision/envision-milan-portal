@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
@@ -6,94 +7,122 @@ import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: Request) {
-  console.log("--- 🔍 DEBUG MODE STARTING ---");
+  console.log("--- 🔍 DEBUG MODE V2 STARTING ---");
 
   // 1. CHECK VARIABLES
+  // Use REGION if AWS_REGION is missing (Amplify Console variable name mismatch fix)
   const bucket = process.env.S3_BUCKET_NAME;
   const table = process.env.TABLE_NAME;
-  const region = process.env.REGION || "ap-south-1";
+  const region = process.env.AWS_REGION || process.env.REGION;
 
   console.log("Config Check:", {
     hasBucket: !!bucket,
     bucketName: bucket ? bucket.substring(0, 3) + "..." : "MISSING ❌",
     hasTable: !!table,
     tableName: table || "MISSING ❌",
+    hasRegion: !!region,
     region: region || "MISSING ❌",
   });
 
   if (!bucket || !table || !region) {
-    console.error("❌ CRITICAL: Missing Environment Variables");
     return NextResponse.json(
-      { error: "Server Configuration Error: Missing Env Vars" },
+      {
+        error:
+          "Server Configuration Error: Missing Env Vars. Check Amplify Console.",
+      },
       { status: 500 },
     );
   }
 
-  // Initialize Clients INSIDE the handler to catch config errors
-  try {
-    const config = { region };
-    const s3 = new S3Client(config);
-    const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient(config));
-    const lambda = new LambdaClient(config);
+  // Initialize Clients
+  // We initialize them here so we can fail fast if creds are bad
+  const config = { region };
+  const s3 = new S3Client(config);
+  const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient(config));
+  const lambda = new LambdaClient(config);
 
+  let step = "init";
+
+  try {
     const { prompt, images } = await req.json();
     const jobId = uuidv4();
     const inputKeys: string[] = [];
 
-    // 2. UPLOAD TO S3
+    // --- STEP 1: S3 UPLOAD ---
+    step = "S3_UPLOAD";
     console.log(`Step 1: Uploading to bucket [${bucket}]...`);
-    await Promise.all(
-      images.map(async (base64Data: string, index: number) => {
-        const buffer = Buffer.from(base64Data, "base64");
-        const key = `temp/${jobId}/img_${index}.jpg`;
-        await s3.send(
-          new PutObjectCommand({
-            Bucket: bucket,
-            Key: key,
-            Body: buffer,
-            ContentType: "image/jpeg",
-          }),
-        );
-        inputKeys.push(key);
-      }),
-    );
 
-    // 3. SAVE TO DYNAMODB
+    try {
+      await Promise.all(
+        images.map(async (base64Data: string, index: number) => {
+          const buffer = Buffer.from(base64Data, "base64");
+          const key = `temp/${jobId}/img_${index}.jpg`;
+          await s3.send(
+            new PutObjectCommand({
+              Bucket: bucket,
+              Key: key,
+              Body: buffer,
+              ContentType: "image/jpeg",
+            }),
+          );
+          inputKeys.push(key);
+        }),
+      );
+    } catch (s3Error: any) {
+      console.error("❌ S3 ERROR:", s3Error);
+      throw new Error(`S3 Upload Failed: ${s3Error.message}`);
+    }
+
+    // --- STEP 2: DYNAMODB SAVE ---
+    step = "DYNAMO_SAVE";
     console.log(`Step 2: Saving to table [${table}]...`);
     const now = Math.floor(Date.now() / 1000);
-    await dynamo.send(
-      new PutCommand({
-        TableName: table,
-        Item: {
-          jobId,
-          status: "processing",
-          prompt,
-          inputImageKeys: inputKeys,
-          createdAt: now,
-          ttl: now + 86400,
-        },
-      }),
-    );
 
-    // 4. INVOKE WORKER
+    try {
+      await dynamo.send(
+        new PutCommand({
+          TableName: table,
+          Item: {
+            jobId,
+            status: "processing",
+            prompt,
+            inputImageKeys: inputKeys,
+            createdAt: now,
+            ttl: now + 86400,
+          },
+        }),
+      );
+    } catch (dbError: any) {
+      console.error("❌ DYNAMO ERROR:", dbError);
+      throw new Error(`DynamoDB Save Failed: ${dbError.message}`);
+    }
+
+    // --- STEP 3: LAMBDA INVOKE ---
+    step = "LAMBDA_INVOKE";
     console.log("Step 3: Invoking worker lambda...");
-    await lambda.send(
-      new InvokeCommand({
-        FunctionName: "poster-generation-worker",
-        InvocationType: "Event",
-        Payload: JSON.stringify({ jobId }),
-      }),
-    );
+
+    try {
+      await lambda.send(
+        new InvokeCommand({
+          FunctionName: "poster-generation-worker", // Ensure this matches EXACTLY in AWS Lambda Console
+          InvocationType: "Event",
+          Payload: JSON.stringify({ jobId }),
+        }),
+      );
+    } catch (lambdaError: any) {
+      console.error("❌ LAMBDA ERROR:", lambdaError);
+      throw new Error(`Lambda Invoke Failed: ${lambdaError.message}`);
+    }
 
     console.log("✅ SUCCESS: Job started");
     return NextResponse.json({ success: true, jobId });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    console.error("❌ CRASHED:", error);
-    // Return the ACTUAL error message to the frontend so you can see it in browser console
+    console.error(`❌ CRASHED AT STEP [${step}]:`, error);
+
     return NextResponse.json(
       {
         error: "Generation Failed",
+        failedStep: step, // This tells us exactly WHERE it stopped
         details: error.message,
         name: error.name,
       },

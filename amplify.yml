@@ -5,11 +5,21 @@ applications:
       phases:
         preBuild:
           commands:
-            # Install from root but stay in context
+            # 1. Install dependencies from root
             - npm --prefix ../.. ci
+
+            # 2. 👇 CRITICAL FIX: Write Env Vars to a file Next.js can read
+            - echo "S3_BUCKET_NAME=$S3_BUCKET_NAME" >> .env.production
+            - echo "TABLE_NAME=$TABLE_NAME" >> .env.production
+            - echo "REGION=$REGION" >> .env.production
+            - echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> .env.production
+
+            # 3. Debug: Print the file content to build logs (safe to remove later)
+            - cat .env.production
+
         build:
           commands:
-            # Build from root
+            # Build from root targeting the web app
             - npm --prefix ../.. run build -- --filter=web
       artifacts:
         baseDirectory: .next
