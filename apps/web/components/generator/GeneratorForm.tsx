@@ -182,6 +182,8 @@ const overlayFrame = (
   });
 };
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const formSchema = z.object({
   theme: z.string().min(3, "Theme is required"),
   imageStyle: z.string().min(3, "Image style is required"),
@@ -301,7 +303,6 @@ export default function GeneratorForm() {
 
       const processingPromises = frames.map(async (frame) => {
         const userBase64 = await compressImageToBase64(frame.userImage!);
-
         const building = CAMPUS_BUILDINGS.find(
           (b) => b.id === frame.buildingId,
         );
@@ -309,38 +310,66 @@ export default function GeneratorForm() {
           throw new Error(`Building not found for frame ${frame.id}`);
 
         const buildingBase64 = await convertUrlToBase64(building.url);
-
         return [userBase64, buildingBase64];
       });
 
       const pairs = await Promise.all(processingPromises);
-
       const flatImages = pairs.flat();
 
       setIsCompressing(false);
 
-      const res = await fetch("/api/generate-image", {
+      const startRes = await fetch("/api/start-generation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt, images: flatImages }),
       });
 
-      if (!res.ok) throw new Error("Image generation failed");
+      if (!startRes.ok) throw new Error("Failed to start generation");
 
-      const data: { imageBase64: string; mimeType: string } = await res.json();
+      const { jobId } = await startRes.json();
+      let attempts = 0;
+      const maxAttempts = 60;
 
-      const compositedImageUrl = await overlayFrame(
-        data.imageBase64,
-        data.mimeType,
-      );
+      while (attempts < maxAttempts) {
+        await wait(4000);
 
-      incrementPosterCount();
+        const statusRes = await fetch(`/api/job-status?jobId=${jobId}`);
+        const statusData = await statusRes.json();
 
-      setState((prev) => ({
-        ...prev,
-        generatedImage: compositedImageUrl,
-        isLoading: false,
-      }));
+        if (statusData.status === "completed") {
+          const imageRes = await fetch(statusData.imageUrl);
+          const imageBlob = await imageRes.blob();
+          const base64Image = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve((reader.result as string).split(",")[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(imageBlob);
+          });
+
+          const compositedImageUrl = await overlayFrame(
+            base64Image,
+            "image/jpeg",
+          );
+
+          incrementPosterCount();
+
+          setState((prev) => ({
+            ...prev,
+            generatedImage: compositedImageUrl,
+            isLoading: false,
+          }));
+          return;
+        }
+
+        if (statusData.status === "failed") {
+          throw new Error(statusData.error || "Generation failed");
+        }
+
+        attempts++;
+      }
+
+      throw new Error("Timeout: Generation took too long");
     } catch (error) {
       console.error(error);
       setIsCompressing(false);
@@ -350,7 +379,6 @@ export default function GeneratorForm() {
   };
 
   return (
-    // Updated bg-transparent to bg-[#2D130A]
     <div className="bg-[#2D130A] p-8 rounded-xl border border-white/50">
       <h2 className="text-3xl font-semibold mb-8 text-center text-white">
         Create Your Memory
