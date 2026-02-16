@@ -5,6 +5,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import { v4 as uuidv4 } from "uuid";
+import { access } from "fs";
 
 export async function POST(req: Request) {
   console.log("--- 🔍 DEBUG MODE V2 STARTING ---");
@@ -34,9 +35,28 @@ export async function POST(req: Request) {
     );
   }
 
+  const accessKeyId: string = process.env.ACCESS_KEY_ID || "";
+  const secretAccessKey: string = process.env.SECRET_ACCESS_KEY || "";
+
+  if (!accessKeyId || !secretAccessKey) {
+    console.error("AWS Credentials Missing");
+    return NextResponse.json(
+      {
+        error:
+          "Server Configuration Error: Missing AWS Credentials. Check Amplify Console.",
+      },
+      { status: 500 },
+    );
+  }
+
   // Initialize Clients
   // We initialize them here so we can fail fast if creds are bad
-  const config = { region };
+  const credentials = {
+    accessKeyId: accessKeyId,
+    secretAccessKey: secretAccessKey,
+  };
+
+  const config = { region, credentials };
   const s3 = new S3Client(config);
   const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient(config));
   const lambda = new LambdaClient(config);
