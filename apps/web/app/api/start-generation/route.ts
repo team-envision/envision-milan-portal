@@ -18,11 +18,13 @@ interface JobItem {
   ttl: number;
 }
 
-const s3 = new S3Client({ region: process.env.AWS_REGION });
+const s3 = new S3Client({ region: process.env.REGION || "ap-south-1" });
 const dynamo = DynamoDBDocumentClient.from(
-  new DynamoDBClient({ region: process.env.AWS_REGION }),
+  new DynamoDBClient({ region: process.env.REGION || "ap-south-1" }),
 );
-const lambda = new LambdaClient({ region: process.env.AWS_REGION });
+const lambda = new LambdaClient({
+  region: process.env.REGION || "ap-south-1",
+});
 
 export async function POST(req: Request) {
   try {
